@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { version } from "os";
 
 export default function Home() {
   return (
