@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const { username, nombre, apellido, email, password, rolid } = await req.json(); // req.json() para obtener los datos
+    const { username, nombre, apellido, email, password } = await req.json(); // req.json() para obtener los datos
 
     if (!username || !nombre || !apellido || !email || !password) {
       return new NextResponse(JSON.stringify({ error: 'Todos los campos son obligatorios' }), {
