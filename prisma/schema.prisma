@@ -15,14 +15,15 @@ datasource db {
 }
 
 model Usuario {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  nombre    String
-  apellido  String
-  email     String   @unique
-  password String
-  rolid Int
-  rol       Rol    @relation(fields: [rolid], references: [id])
+  id              Int      @id @default(autoincrement())
+  username        String   @unique
+  nombre          String
+  apellido        String
+  email           String   @unique
+  password        String
+  emailVerified   Boolean
+  rolid           Int
+  rol             Rol    @relation(fields: [rolid], references: [id])
 }
 
 model Rol {

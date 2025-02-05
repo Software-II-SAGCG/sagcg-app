@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
+
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get('Authorization');

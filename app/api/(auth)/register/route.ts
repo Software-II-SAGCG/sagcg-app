@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
         apellido,
         email,
         password: hashedPassword,
+        emailVerified: false, // Asignar el valor de false por defecto
         rolid: Number(rolid),
       },
     });
