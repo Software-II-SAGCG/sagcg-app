@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const { username, nombre, apellido, email, password, rolid } = await req.json(); // req.json() para obtener los datos
 
-    if (!username || !nombre || !apellido || !email || !password || !rolid) {
+    if (!username || !nombre || !apellido || !email || !password) {
       return new NextResponse(JSON.stringify({ error: 'Todos los campos son obligatorios' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         email,
         password: hashedPassword,
         emailVerified: false, // Asignar el valor de false por defecto
-        rolid: Number(rolid),
+        rolid: 2, //Number(rolid),
       },
     });
 
