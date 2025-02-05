@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -56,19 +56,22 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
     });
 
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error al actualizar el usuario:', error);
 
     let status = 500;
     let message = 'Error al actualizar usuario';
 
-    if (error.code === 'P2002') {
-      status = 400;
-      message = 'El email o username ya existen.';
-    } else if (error.name === 'PrismaClientKnownRequestError') {
-      console.error('Prisma Error:', error);
-      message = 'Error en la base de datos.';
+    if (error instanceof Prisma.PrismaClientKnownRequestError){
+      if (error.code === 'P2002') {
+        status = 400;
+        message = 'El email o username ya existen.';
+      } else if (error.name === 'PrismaClientKnownRequestError') {
+        console.error('Prisma Error:', error);
+        message = 'Error en la base de datos.';
+      }
     }
+    
 
     return new NextResponse(JSON.stringify({ error: message }), {
       status,
@@ -86,17 +89,19 @@ export async function DELETE(req: NextRequest, { params }: {params:Params}) {
     });
 
     return NextResponse.json({ message: 'Usuario eliminado con éxito', usuario }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error al eliminar el usuario:', error);
 
     let status = 500;
     let message = 'Error al eliminar usuario';
 
-    if (error.code === 'P2025') {
-      status = 404;
-      message = 'Usuario no encontrado.';
+    if (error instanceof Prisma.PrismaClientKnownRequestError){
+      if (error.code === 'P2025') {
+        status = 404;
+        message = 'Usuario no encontrado.';
+      }
     }
-
+    
     return new NextResponse(JSON.stringify({ error: message }), {
       status,
       headers: { 'Content-Type': 'application/json' },
