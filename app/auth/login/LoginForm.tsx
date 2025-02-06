@@ -12,13 +12,31 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    // 🔴 Comentamos la validación real y solo redirigimos al usuario
-    // Aquí normalmente iría la llamada a la API para validar usuario y contraseña.
-    // Ejemplo de endpoint que podrías usar en el futuro:
-    // fetch("http://localhost:3000/api/login", { method: "POST", body: JSON.stringify({ username, password }) })
-
-    router.push("/dashboard"); // Redirige al dashboard sin validar datos.
+  
+    try {
+      // Codificar las credenciales en Base64 para Basic Auth
+      const credentials = btoa(`${username}:${password}`);
+      
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Authorization": `Basic ${credentials}`,
+          "Content-Type": "application/json"
+        }
+      });
+  
+      if (response.ok) {
+        // Inicio de sesión exitoso
+        router.push("/dashboard");
+      } else {
+        // Error en el inicio de sesión
+        const data = await response.json();
+        setError(data.error || "Error al iniciar sesión");
+      }
+    } catch (err) {
+      console.error("Error durante la solicitud:", err);
+      setError("Error en la conexión al servidor");
+    }
   };
   
   const handleRegister = () => {
@@ -39,14 +57,14 @@ export default function LoginForm() {
             placeholder="Usuario"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="border p-2 mb-4 rounded-md"
+            className="border p-2 mb-4 rounded-md text-black"
           />
           <input
             type="password"
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border p-2 mb-4 rounded-md"
+            className="border p-2 mb-4 rounded-md text-black"
           />
           <button type="submit" className="bg-blue-500 text-white py-2 font-bold rounded-md">
             Iniciar Sesión
