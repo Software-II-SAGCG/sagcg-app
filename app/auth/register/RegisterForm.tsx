@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -11,6 +12,11 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    setShowToast(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +32,10 @@ export default function RegisterForm() {
       if (response.ok) {
         // Registro exitoso
         const data = await response.json();
-        console.log("Usuario registrado:", data.usuario);
+        toast.success("Registro exitoso");
+
         // Redirige al login
-        router.push("/");
+        setTimeout(() => router.push("/"), 4000);
       } else {
         // Error en el registro
         const data = await response.json();
@@ -42,6 +49,7 @@ export default function RegisterForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      {showToast && <ToastContainer />}
       <div className="bg-white p-8 shadow-md rounded-md w-96">
         <h2 className="text-black text-center text-2xl font-bold mb-2">Registrarse</h2>
         <p className="text-center text-gray-600 mb-4">
