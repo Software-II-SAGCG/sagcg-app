@@ -32,6 +32,7 @@ export default function RegisterForm() {
       if (response.ok) {
         // Registro exitoso
         const data = await response.json();
+        console.log("Usuario registrado:", data.usuario);
         toast.success("Registro exitoso");
 
         // Redirige al login
@@ -51,11 +52,13 @@ export default function RegisterForm() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       {showToast && <ToastContainer />}
       <div className="bg-white p-8 shadow-md rounded-md w-96">
-        <h2 className="text-black text-center text-2xl font-bold mb-2">Registrarse</h2>
+        <h2 className="text-black text-center text-2xl font-bold mb-2">
+          Registrarse
+        </h2>
         <p className="text-center text-gray-600 mb-4">
           ¿Ya tienes un usuario?{" "}
-          <span 
-            className="text-blue-500 cursor-pointer underline" 
+          <span
+            className="text-blue-500 cursor-pointer underline"
             onClick={() => router.push("/")}
           >
             Inicia sesión
