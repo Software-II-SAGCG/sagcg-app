@@ -34,9 +34,9 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
 
 export async function PUT(req: NextRequest, { params }: {params:Params}) {
   const { id } = params;
-  const { username, nombre, apellido, email, rolid } = await req.json();
+  const { username, nombre, apellido, email} = await req.json();
 
-  if (!username || !nombre || !apellido || !email || !rolid) {
+  if (!username || !nombre || !apellido || !email) {
     return new NextResponse(JSON.stringify({ error: 'Todos los campos son obligatorios' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
@@ -50,8 +50,7 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
         username,
         nombre,
         apellido,
-        email,
-        rolid: Number(rolid),
+        email
       },
     });
 
