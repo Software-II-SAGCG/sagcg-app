@@ -15,15 +15,16 @@ datasource db {
 }
 
 model Usuario {
-  id              Int      @id @default(autoincrement())
-  username        String   @unique
-  nombre          String
-  apellido        String
-  email           String   @unique
-  password        String
-  emailVerified   Boolean
-  rolid           Int
-  rol             Rol    @relation(fields: [rolid], references: [id])
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  nombre        String
+  apellido      String
+  email         String   @unique
+  password      String
+  emailVerified Boolean
+  rolid         Int
+  rol           Rol      @relation(fields: [rolid], references: [id])
+  cosechas      CosechaUsuario[]
 }
 
 model Rol {
@@ -31,14 +32,14 @@ model Rol {
   nombre      String   @unique
   descripcion String?
   usuarios    Usuario[]
-  permisos    RolPermiso[] 
+  permisos    RolPermiso[]
 }
 
 model Permiso {
   id          Int      @id @default(autoincrement())
   nombre      String   @unique
   descripcion String?
-  roles       RolPermiso[]    
+  roles       RolPermiso[]
 }
 
 model RolPermiso {
@@ -47,4 +48,44 @@ model RolPermiso {
   permiso   Permiso  @relation(fields: [permisoId], references: [id])
   permisoId Int
   @@id([rolId, permisoId])
+}
+
+model TipoProductor {
+  id     Int      @id @default(autoincrement())
+  nombre String   @unique
+  productor Productor[]
+}
+
+model Productor {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  cedula    Int
+  nacionalidadId Int
+  nacionalidad  Nacionalidad @relation(fields: [nacionalidadId], references: [id])
+  telefonoLocal  String
+  direccion1    String
+  direccion2    String
+  tipoid    Int
+  tipo      TipoProductor     @relation(fields: [tipoid], references: [id])
+}
+
+model Nacionalidad {
+  id    Int      @id @default(autoincrement())
+  nombre String   @unique
+  productores Productor[]
+}
+
+model Cosecha {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  usuarios  CosechaUsuario[]
+}
+
+model CosechaUsuario {
+  cosecha   Cosecha @relation(fields: [cosechaId], references: [id])
+  cosechaId Int
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  @@id([cosechaId, usuarioId])
 }
