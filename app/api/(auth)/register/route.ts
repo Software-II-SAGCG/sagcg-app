@@ -1,12 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { NextRequest, NextResponse } from 'next/server'; // Importa NextResponse
+import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    // Verifica que haya contenido en el body antes de parsearlo
     const body = await req.text();
     if (!body) {
       return new NextResponse(JSON.stringify({ error: "El cuerpo de la solicitud está vacío" }), {
@@ -15,7 +14,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { username, nombre, apellido, email, password } = JSON.parse(body); // Convertimos manualmente
+    const { username, nombre, apellido, email, password } = JSON.parse(body);
 
     if (!username || !nombre || !apellido || !email || !password) {
       return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
@@ -24,7 +23,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const usuario = await prisma.usuario.create({

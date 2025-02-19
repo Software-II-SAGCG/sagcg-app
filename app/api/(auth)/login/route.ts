@@ -38,7 +38,9 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      return new NextResponse(JSON.stringify({ message: 'Inicio de sesión exitoso' }), {
+      return new NextResponse(JSON.stringify({ 
+        data: usuario,
+        message: 'Inicio de sesión exitoso' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
