@@ -4,13 +4,9 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-type Params = {
-  id: string;
-};
 
-export async function PUT(req: NextRequest, { params }: {params:Params}) {
-  const { id } = params;
-  const {password} = await req.json();
+export async function PUT(req: NextRequest) {
+  const {username, password} = await req.json();
 
   if (!password) {
     return new NextResponse(JSON.stringify({ error: 'La contraseña es obligatoria' }), {
@@ -22,7 +18,7 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
     const usuario = await prisma.usuario.update({
-      where: { id: Number(id) },
+      where: { username: username },
       data: {
         password: hashedPassword,
       },
