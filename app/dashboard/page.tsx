@@ -9,6 +9,9 @@ export default function DashboardPage() {
     // Aquí se puede limpiar tokens o datos de sesión si los tienes
     router.push("/");
   };
+  const DatosProductor = () => {
+    router.push("/dashboard/datosproductor"); // Redirige a la página de registro
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -27,6 +30,11 @@ export default function DashboardPage() {
             onClick={handleLogout} 
             className="bg-red-500 text-white px-6 py-2 rounded-md shadow hover:bg-red-600 transition">
             Cerrar Sesión
+          </button>
+          <button
+            onClick={DatosProductor}
+            className="bg-green-500 text-white px-6 py-2 rounded-md shadow hover:bg-green-600 transition">
+            Datos Productor
           </button>
         </div>
       </div>
