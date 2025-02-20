@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { username, nombre, apellido, email, password } = JSON.parse(body);
+    const { username, nombre, apellido, email, password, rolid } = JSON.parse(body); 
 
-    if (!username || !nombre || !apellido || !email || !password) {
+    if (!username || !nombre || !apellido || !email || !password || !rolid) {
       return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         email,
         password: hashedPassword,
         emailVerified: false,
-        rolid: 2,
+        rolid: Number(rolid),
       },
     });
 

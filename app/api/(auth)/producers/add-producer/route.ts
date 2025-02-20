@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
@@ -14,30 +13,29 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { username, nombre, apellido, email, password } = JSON.parse(body);
+    const {nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid } = JSON.parse(body);
 
-    if (!username || !nombre || !apellido || !email || !password) {
+    if (!nombre || !apellido || !cedula || !nacionalidadId || !telefonoLocal || !direccion1 || !direccion2 || !tipoid) {
       return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const data = {
+        nombre, 
+        apellido, 
+        cedula, 
+        nacionalidadId, 
+        telefonoLocal, 
+        direccion1, 
+        direccion2, 
+        tipoid
+    }
+    
+    const productor = await prisma.productor.create({data});
 
-    const usuario = await prisma.usuario.create({
-      data: {
-        username,
-        nombre,
-        apellido,
-        email,
-        password: hashedPassword,
-        emailVerified: false,
-        rolid: 2,
-      },
-    });
-
-    return new NextResponse(JSON.stringify({ message: "Usuario registrado con éxito", usuario }), {
+    return new NextResponse(JSON.stringify({ message: "Productor agregado con éxito", productor }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
@@ -46,12 +44,9 @@ export async function POST(req: NextRequest) {
     console.error(error);
 
     let status = 500;
-    let message = "Error al registrar usuario";
+    let message = "Error al agregar el productor";
 
-    if (error.code === "P2002") {
-      status = 400;
-      message = "El email o username ya existen.";
-    } else if (error.name === "PrismaClientKnownRequestError") {
+    if (error.name === "PrismaClientKnownRequestError") {
       message = "Error en la base de datos.";
     }
 
@@ -61,4 +56,3 @@ export async function POST(req: NextRequest) {
     });
   }
 }
-

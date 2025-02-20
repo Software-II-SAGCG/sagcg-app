@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
       });
     }
 
-    return NextResponse.json(usuario, { status: 200 });
+    return NextResponse.json(usuario.cosechas.map(c => c.cosecha), { status: 200 });
   } catch (error) {
     console.error('Error al obtener el usuario:', error);
     return new NextResponse(JSON.stringify({ message: 'Internal server error' }), {
