@@ -214,10 +214,10 @@ export default function DatosProductor() {
   };
 
   return (
-    <div className="scre flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <div className="p-4">
         {/* Botón Agregar y Buscador */}
-        <div className="flex justify-between items-center  bg-gray-100 mb-4">
+        <div className="flex justify-between items-center  text-black mb-4">
           <div className="flex items-center">
             <button onClick={openAddModal} className="bg-green-500 text-black px-4 py-2 rounded-full mr-2">
               +
@@ -240,7 +240,7 @@ export default function DatosProductor() {
 
         {/* Lista de Productores */}
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-blue-500 border">
+          <table className="min-w-full bg-blue-500 border-spacing-0 rounded-md">
             <thead>
               <tr>
                 <th className="border p-2">ID</th>
@@ -287,108 +287,102 @@ export default function DatosProductor() {
 
         {/* Modal para Agregar/Editar */}
         {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-10">
-            <div className="text-black p-6 rounded-md w-96">
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
+            <div className="bg-white text-black p-6 rounded-md w-96 shadow-lg">
               <h2 className="text-xl font-bold mb-4">
-                {isEditMode ? "Editar Productor" : "Agregar Productor"}
+              {isEditMode ? "Editar Productor" : "Agregar Productor"}
               </h2>
               <form onSubmit={handleFormSubmit} className="flex flex-col">
-                <input
-                  type="text"
-                  name="nombre"
-                  placeholder="Nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <input
-                  type="text"
-                  name="apellido"
-                  placeholder="Apellido"
-                  value={formData.apellido}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <input
-                  type="number"
-                  name="cedula"
-                  placeholder="Cédula"
-                  value={formData.cedula}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <select
-                  name="nacionalidadId"
-                  value={formData.nacionalidadId}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                >
-                  <option value="">Seleccionar Nacionalidad</option>
-                  {/* {nationalities.map(nat => (
-                    <option key={nat.id} value={nat.id}>
-                      {nat.nombre}
-                    </option>
-                  ))} */}
-                  <option value={1} className="border p-2 mb-2 rounded-md text-black">Venezolana</option>
-                  <option value={2} className="border p-2 mb-2 rounded-md text-black">Colombiana</option>
-                  <option value={3} className="border p-2 mb-2 rounded-md text-black">Argentina</option>
-                </select>
-                <input
-                  type="text"
-                  name="telefonoLocal"
-                  placeholder="Teléfono Local"
-                  value={formData.telefonoLocal}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <input
-                  type="text"
-                  name="direccion1"
-                  placeholder="Dirección 1"
-                  value={formData.direccion1}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <input
-                  type="text"
-                  name="direccion2"
-                  placeholder="Dirección 2"
-                  value={formData.direccion2}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                />
-                <select
-                  name="tipoid"
-                  value={formData.tipoid}
-                  onChange={handleInputChange}
-                  className="border p-2 mb-2 rounded-md text-black"
-                >
-                  <option value="">Seleccionar Tipo</option>
-                  {/* {producerTypes.map(tp => (
-                    <option key={tp.id} value={tp.id}>
-                      {tp.nombre}
-                    </option>
-                  ))} */}
-                  <option value={1} className="border p-2 mb-2 rounded-md text-black">Productor 1</option>
-                  <option value={2} className="border p-2 mb-2 rounded-md text-black">Productor 2</option>
-                  <option value={3} className="border p-2 mb-2 rounded-md text-black">Productor 3</option>
-                </select>
-                <button type="submit" className="bg-blue-500 text-black py-2 rounded-md font-bold">
-                  {isEditMode ? "Actualizar" : "Agregar"}
-                </button>
-                <button onClick={() => setShowModal(false)} className="bg-red-500 text-black py-2 rounded-md font-bold">
+              <input
+                type="text"
+                name="nombre"
+                placeholder="Nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <input
+                type="text"
+                name="apellido"
+                placeholder="Apellido"
+                value={formData.apellido}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <input
+                type="number"
+                name="cedula"
+                placeholder="Cédula"
+                value={formData.cedula}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <select
+                name="nacionalidadId"
+                value={formData.nacionalidadId}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              >
+                <option value="">Seleccionar Nacionalidad</option>
+                {nationalities.map(nat => (
+                <option key={nat.id} value={nat.id}>
+                  {nat.nombre}
+                </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                name="telefonoLocal"
+                placeholder="Teléfono Local"
+                value={formData.telefonoLocal}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <input
+                type="text"
+                name="direccion1"
+                placeholder="Dirección 1"
+                value={formData.direccion1}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <input
+                type="text"
+                name="direccion2"
+                placeholder="Dirección 2"
+                value={formData.direccion2}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              />
+              <select
+                name="tipoid"
+                value={formData.tipoid}
+                onChange={handleInputChange}
+                className="border p-2 mb-2 rounded-md text-black"
+              >
+                <option value="">Seleccionar Tipo</option>
+                {producerTypes.map(tp => (
+                <option key={tp.id} value={tp.id}>
+                  {tp.nombre}
+                </option>
+                ))}
+              </select>
+              <button type="submit" className="bg-blue-500 text-black py-2 rounded-md font-bold">
+                {isEditMode ? "Actualizar" : "Agregar"}
+              </button>
+              <button onClick={() => setShowModal(false)} className="bg-red-500 text-black py-2 rounded-md font-bold mt-2">
                 Cancelar
-                </button>
+              </button>
               </form>
             </div>
-          </div>
+            </div>
         )}
 
         {/* Modal de confirmación para eliminar */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50">
-            <div className="bg-white p-6 rounded-md w-96 text-center">
-              <p className="mb-4">¿Desea eliminar este productor?</p>
+            <div className="bg-white text-black p-6 items-center rounded-md w-96 shadow-lg">
+              <p className="mb-4 text-center">¿Desea eliminar este productor?</p>
               <div className="flex justify-center space-x-4">
                 <button onClick={confirmDelete} className="bg-red-500 text-white px-4 py-2 rounded">
                   Sí
