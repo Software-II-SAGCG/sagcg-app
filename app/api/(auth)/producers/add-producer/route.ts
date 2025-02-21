@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
 
 export async function POST(req: NextRequest) {
   try {

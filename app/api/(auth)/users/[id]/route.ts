@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
 
 type Params = {
   id: string;
 };
 
 export async function GET(req: NextRequest, { params }: {params:Params}) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const usuario = await prisma.usuario.findUnique({
