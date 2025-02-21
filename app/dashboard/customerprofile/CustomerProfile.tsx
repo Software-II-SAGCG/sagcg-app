@@ -2,7 +2,7 @@
 import Modal from "@/app/components/Modal";
 import Loader from "@/app/components/Loader";
 import { useState, useEffect } from "react";
-import { FaSearch, FaPlus, FaEdit, FaTimes } from "react-icons/fa";
+import { FaSearch, FaPlus } from "react-icons/fa";
 
 interface Cosecha {
   id: number;
@@ -10,8 +10,21 @@ interface Cosecha {
 }
 
 export default function UserProfiles() {
-  const [users, setUsers] = useState([]);
-  const [rols, setRols] = useState([]);
+  interface User {
+    id: number;
+    username: string;
+    nombre: string;
+    apellido: string;
+    rolid: number;
+  }
+
+  const [users, setUsers] = useState<User[]>([]);
+  interface Rol {
+    id: number;
+    nombre: string;
+  }
+
+  const [rols, setRols] = useState<Rol[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
