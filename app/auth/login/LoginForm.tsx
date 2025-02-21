@@ -7,6 +7,8 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [attempts, setAttempts] = useState(0);
+  const [showResetButton, setShowResetButton] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,16 +28,17 @@ export default function LoginForm() {
       });
   
       if (response.ok) {
-        // Inicio de sesión exitoso
         router.push("/dashboard");
       } else {
-        // Error en el inicio de sesión
-        const data = await response.json();
-        setError(data.error || "Error al iniciar sesión");
+        setError("Usuario o contraseña incorrectos.");
+        setAttempts((prev) => prev + 1);
+        if (attempts + 1 >= 3) {
+          setShowResetButton(true);
+        }
       }
     } catch (err) {
       console.error("Error durante la solicitud:", err);
-      setError("Error en la conexión al servidor");
+      setError("Error en la conexión al servidor.");
     }
   };
   
@@ -43,6 +46,10 @@ export default function LoginForm() {
     router.push("/auth/register"); // Redirige a la página de registro
   };
 
+  const handleResetPassword = async () => {
+    router.push(`/auth/reset?username=${username}`);
+  };
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 items-center justify-center shadow-md rounded-md w-96">
@@ -76,6 +83,14 @@ export default function LoginForm() {
             Registrarse
           </button>
         </form>
+        {showResetButton && (
+          <button
+            onClick={handleResetPassword}
+            className="bg-gray-300 text-black py-2 rounded-md font-bold mt-4 w-full"
+          >
+            Restablecer Contraseña
+          </button>
+        )}
       </div>
     </div>
   );

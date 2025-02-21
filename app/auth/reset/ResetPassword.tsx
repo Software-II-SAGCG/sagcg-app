@@ -1,20 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const username = searchParams.get("UserId") || "";
+  const username = searchParams.get("username");
+
+  useEffect(() => {
+    if (!username) {
+      setError("Error: Usuario no encontrado.");
+    }
+  }, [username]);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
+
+    if (!username) {
+      setError("Error: No se encontró el usuario.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden.");
@@ -30,6 +42,7 @@ export default function ResetPassword() {
 
       if (response.ok) {
         setMessage("Contraseña restablecida correctamente.");
+        setTimeout(() => router.push("/login"), 2000);
       } else {
         const data = await response.json();
         setError(data.error || "Error al restablecer la contraseña.");
@@ -44,6 +57,7 @@ export default function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-md rounded-md w-96">
         <h2 className="text-2xl font-bold text-center mb-4 text-black">Restablecer Contraseña</h2>
+
         {message && <p className="text-green-500">{message}</p>}
         {error && <p className="text-red-500">{error}</p>}
 

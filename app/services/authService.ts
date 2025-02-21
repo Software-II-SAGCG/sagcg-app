@@ -17,3 +17,11 @@ export async function login(username: string, password: string) {
     return { success: true };
   }
   
+  export async function ProductorById(id: string) {
+    const res = await fetch(`http://localhost:3000/api/productor/${id}`);
+    if (!res.ok) {
+      return { success: false };
+    }
+  
+    return { success: true, data: await res.json() };
+  }
