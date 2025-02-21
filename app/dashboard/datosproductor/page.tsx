@@ -1,10 +1,10 @@
 "use client";
-import DatosProductor from "./DatosProductor";
+import CustomerProfile from "../customerprofile/CustomerProfile";
 
 export default function DashboardPage() {
   return (
     <div className="p-4">
-      <DatosProductor />
+      <CustomerProfile />
     </div>
   );
 }
