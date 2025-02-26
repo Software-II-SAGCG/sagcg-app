@@ -1,69 +1,111 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
 
-export default function ResetPassword() {
+export default function RegisterForm() {
+  const [username, setUsername] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const searchParams = useSearchParams();
-  const username = searchParams.get("UserId") || "";
+  const router = useRouter();
+  const [showToast, setShowToast] = useState(false);
 
-  const handleReset = async (e: React.FormEvent) => {
+  useEffect(() => {
+    setShowToast(true);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
-
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${username}/edit-password`, {
-        method: "PUT",
+      const response = await fetch("/api/register", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, nombre, apellido, email, password }),
       });
 
       if (response.ok) {
-        setMessage("Contraseña restablecida correctamente.");
-      } else {
+        // Registro exitoso
         const data = await response.json();
-        setError(data.error || "Error al restablecer la contraseña.");
+        toast.success("Registro exitoso");
+
+        // Redirige al login
+        setTimeout(() => router.push("/"), 4000);
+      } else {
+        // Error en el registro
+        const data = await response.json();
+        setError(data.error || "Error al registrar el usuario");
       }
     } catch (err) {
-      console.error("Error en la solicitud:", err);
-      setError("Error en la conexión al servidor.");
+      console.error("Error durante la solicitud:", err);
+      setError("Error en la conexión al servidor");
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      {showToast && <ToastContainer />}
       <div className="bg-white p-8 shadow-md rounded-md w-96">
-        <h2 className="text-2xl font-bold text-center mb-4 text-black">Restablecer Contraseña</h2>
-        {message && <p className="text-green-500">{message}</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        <h2 className="text-black text-center text-2xl font-bold mb-2">Registrarse</h2>
+        <p className="text-center text-gray-600 mb-4">
+          ¿Ya tienes un usuario?{" "}
+          <span 
+            className="text-blue-500 cursor-pointer underline" 
+            onClick={() => router.push("/")}
+          >
+            Inicia sesión
+          </span>
+        </p>
 
-        <form onSubmit={handleReset} className="flex flex-col">
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <input
+            type="text"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 mb-4 rounded-md text-black"
+          />
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            className="border p-2 mb-4 rounded-md text-black"
+          />
+          <input
+            type="text"
+            placeholder="Apellido"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+            className="border p-2 mb-4 rounded-md text-black"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border p-2 mb-4 rounded-md text-black"
+          />
           <input
             type="password"
-            placeholder="Nueva Contraseña"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="border p-2 mb-4 rounded-md text-black"
           />
-          <input
-            type="password"
-            placeholder="Confirmar Contraseña"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="border p-2 mb-4 rounded-md text-black"
-          />
-          <button type="submit" className="bg-blue-500 text-white py-2 rounded-md font-bold">
-            Restablecer
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 font-bold rounded-md"
+          >
+            Registrarse
           </button>
         </form>
       </div>
