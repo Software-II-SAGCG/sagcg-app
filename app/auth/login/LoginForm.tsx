@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ export default function LoginForm() {
   const [attempts, setAttempts] = useState(0);
   const [showResetButton, setShowResetButton] = useState(false);
   const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,8 @@ export default function LoginForm() {
       });
   
       if (response.ok) {
+        const data = await response.json();
+        authContext?.login(data.data);
         router.push("/dashboard");
       } else {
         setError("Usuario o contraseña incorrectos.");

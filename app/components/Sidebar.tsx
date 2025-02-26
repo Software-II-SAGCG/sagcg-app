@@ -14,14 +14,19 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
-const Sidebar = () => {
+interface SidebarProps {
+  rolid: number;
+}
+
+const Sidebar = ({ rolid }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
   const menuItems = [
-    { name: "Dashboard", href: "/dashboard", icon: <Home size={20} /> },
-    { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} /> },
-    { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} /> },
+    { name: "Home", href: "/dashboard", icon: <Home size={20} />, roles: [1,2,3] },
+    { name: "Perfil", href: "/dashboard/profile", icon: <User size={20} />, roles: [1,2,3] },
+    { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
+    { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} />, roles: [1] },
     /*{ name: "Logger de Eventos", href: "/dashboard/logger-eventos", icon: <BookOpen size={20} /> },*/
   ];
   
@@ -34,7 +39,9 @@ const Sidebar = () => {
     <aside className="w-64 h-screen bg-gray-800 text-white p-4 flex flex-col overflow-y-auto">
       <h2 className="text-lg text-center font-bold mb-6">Menú</h2>
       <nav className="space-y-2 flex-grow">
-        {menuItems.map((item) => (
+        {menuItems
+        .filter(item => item.roles.includes(rolid))
+        .map((item) => (
           <Link
            key={item.name}
            href={item.href}
