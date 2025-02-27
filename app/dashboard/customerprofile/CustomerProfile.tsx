@@ -3,6 +3,7 @@ import Modal from "@/app/components/Modal";
 import Loader from "@/app/components/Loader";
 import { useState, useEffect } from "react";
 import { FaSearch, FaPlus } from "react-icons/fa";
+import RegisterModal from "@/app/components/RegisterModal";
 
 interface Cosecha {
   id: number;
@@ -26,6 +27,7 @@ export default function UserProfiles() {
 
   const [rols, setRols] = useState<Rol[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
@@ -106,7 +108,9 @@ export default function UserProfiles() {
           <button className="bg-gray-400 p-2 rounded text-white">
             <FaSearch />
           </button>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">
+          <button 
+          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
+          onClick={()=>{setIsRegisterModalOpen(true)}}>
             <FaPlus />
           </button>
         </div>
@@ -196,6 +200,10 @@ export default function UserProfiles() {
           </>
         )}
       </Modal>
+
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => setIsRegisterModalOpen(false)}>
+
+      </RegisterModal>
     </div>
   );
 }
