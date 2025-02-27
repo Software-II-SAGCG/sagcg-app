@@ -3,7 +3,6 @@
 import React from 'react';
 import Modal from './Modal';
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 
 interface ModalRegisterProps {
@@ -25,7 +24,6 @@ const RegisterModal: React.FC<ModalRegisterProps> = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState("");
   const [rolid, setRolId] = useState<number | null>(null);
   const [error, setError] = useState("");
-  const router = useRouter();
   const [showToast, setShowToast] = useState(false);
   const [rols, setRols] = useState<Rol[]>([]);
   

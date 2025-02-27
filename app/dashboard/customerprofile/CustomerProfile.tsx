@@ -4,6 +4,8 @@ import Loader from "@/app/components/Loader";
 import { useState, useEffect } from "react";
 import { FaSearch, FaPlus } from "react-icons/fa";
 import RegisterModal from "@/app/components/RegisterModal";
+import EditRolModal from "@/app/components/EditRolModal";
+import { MdEdit } from "react-icons/md";
 
 interface Cosecha {
   id: number;
@@ -28,10 +30,13 @@ export default function UserProfiles() {
   const [rols, setRols] = useState<Rol[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isEditRolModalOpen, setIsEditRolOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [userId, setUserId] = useState(0);
+  const [userNombre, setUserNombre] = useState("");
+  const [userApellido, setUserApellido] = useState("");
 
   const fetchCosechas = async () => {
     setIsLoading(true);
@@ -145,7 +150,18 @@ export default function UserProfiles() {
                 <td className="p-2 text-center">
                   <span>
                     {rols.find((rol) => rol.id === user.rolid)?.nombre}
+  
                   </span>
+                  <button
+                      onClick={()=> {
+                        setIsEditRolOpen(true)
+                        setUserId(user.id)
+                        setUserNombre(user.nombre)
+                        setUserApellido(user.apellido)}}        
+                      className="ml-4"
+                      >
+                      <MdEdit />
+                  </button>
                   {/* {nationalities.find(nat => nat.id === producer.nacionalidadId)?.nombre || producer.nacionalidadId} */}
                 </td>
                 <td className="p-2 text-center">
@@ -201,9 +217,14 @@ export default function UserProfiles() {
         )}
       </Modal>
 
-      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => setIsRegisterModalOpen(false)}>
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => setIsRegisterModalOpen(false)} />
 
-      </RegisterModal>
+      <EditRolModal 
+        isOpen={isEditRolModalOpen} 
+        onClose={()=> setIsEditRolOpen(false)} 
+        userId={userId}
+        userNombre={userNombre}
+        userApellido={userApellido}/>
     </div>
   );
 }
