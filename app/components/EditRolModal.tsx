@@ -29,7 +29,7 @@ const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, 
 
   const [rolid, setRolId] = useState<number | null>(null);
   const [error, setError] = useState("");
-  const [isLoading, setIsoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -44,12 +44,12 @@ const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, 
   
         if (response.ok) {
           // Registro exitoso
-          setIsoading(true);
+          setIsLoading(true);
           const data = await response.json();
   
           // Redirige al login
           setTimeout(() => {
-            setIsoading(false); 
+            setIsLoading(false); 
             onClose();
             window.location.reload();
           }, 2000);

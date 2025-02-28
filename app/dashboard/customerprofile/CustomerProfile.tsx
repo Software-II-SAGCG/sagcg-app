@@ -2,9 +2,10 @@
 import Modal from "@/app/components/Modal";
 import Loader from "@/app/components/Loader";
 import { useState, useEffect } from "react";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus, FaTimes } from "react-icons/fa";
 import RegisterModal from "@/app/components/RegisterModal";
 import EditRolModal from "@/app/components/EditRolModal";
+import DeleteUserModal from "@/app/components/DeleteUserModal";
 import { MdEdit } from "react-icons/md";
 
 interface Cosecha {
@@ -31,12 +32,11 @@ export default function UserProfiles() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isEditRolModalOpen, setIsEditRolOpen] = useState(false);
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [userId, setUserId] = useState(0);
-  const [userNombre, setUserNombre] = useState("");
-  const [userApellido, setUserApellido] = useState("");
   const [dataUser, setDataUser] = useState<User | null>(null);
 
   const fetchCosechas = async () => {
@@ -174,6 +174,15 @@ export default function UserProfiles() {
                     Ver Cosechas
                   </button>
                 </td>
+                <td>
+                  <button
+                    onClick={()=>{
+                      setIsDeleteUserModalOpen(true);
+                      setDataUser(user);
+                    }}>
+                    <FaTimes color="red"/>
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -223,6 +232,11 @@ export default function UserProfiles() {
         onClose={()=> setIsEditRolOpen(false)} 
         dataUser = {dataUser}
         rols={rols}/>
+
+      <DeleteUserModal
+        isOpen={isDeleteUserModalOpen}
+        onClose={()=> setIsDeleteUserModalOpen(false)}
+        dataUser={dataUser}/>
     </div>
   );
 }
