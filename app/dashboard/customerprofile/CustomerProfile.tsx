@@ -37,6 +37,7 @@ export default function UserProfiles() {
   const [userId, setUserId] = useState(0);
   const [userNombre, setUserNombre] = useState("");
   const [userApellido, setUserApellido] = useState("");
+  const [dataUser, setDataUser] = useState<User | null>(null);
 
   const fetchCosechas = async () => {
     setIsLoading(true);
@@ -155,9 +156,7 @@ export default function UserProfiles() {
                   <button
                       onClick={()=> {
                         setIsEditRolOpen(true)
-                        setUserId(user.id)
-                        setUserNombre(user.nombre)
-                        setUserApellido(user.apellido)}}        
+                        setDataUser(user)}}   
                       className="ml-4"
                       >
                       <MdEdit />
@@ -222,9 +221,8 @@ export default function UserProfiles() {
       <EditRolModal 
         isOpen={isEditRolModalOpen} 
         onClose={()=> setIsEditRolOpen(false)} 
-        userId={userId}
-        userNombre={userNombre}
-        userApellido={userApellido}/>
+        dataUser = {dataUser}
+        rols={rols}/>
     </div>
   );
 }

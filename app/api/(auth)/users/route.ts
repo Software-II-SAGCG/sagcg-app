@@ -3,7 +3,11 @@ import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Pris
 
 export async function GET() {
 	try {
-		const users = await prisma.usuario.findMany();
+		const users = await prisma.usuario.findMany({
+			orderBy:{
+				id:'asc',
+			}
+		});
 
 		return NextResponse.json(users, { status: 200 });
 	} catch (error) {

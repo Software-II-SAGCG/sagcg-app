@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Users, FileText, BookOpen, LogOut, MoreVertical, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
+
 interface SidebarProps {
   rolid: number;
 }
@@ -21,6 +24,7 @@ interface SidebarProps {
 const Sidebar = ({ rolid }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   const menuItems = [
     { name: "Home", href: "/dashboard", icon: <Home size={20} />, roles: [1,2,3] },
@@ -32,6 +36,9 @@ const Sidebar = ({ rolid }: SidebarProps) => {
   
   const handleLogout = () => {
     // Aquí se puede limpiar tokens o datos de sesión si los tienes
+    if(authContext){
+      authContext.logout();
+    };
     router.push("/");
   };
 
