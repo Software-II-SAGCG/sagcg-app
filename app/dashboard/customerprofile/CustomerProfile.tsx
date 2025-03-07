@@ -7,6 +7,9 @@ import RegisterModal from "@/app/components/RegisterModal";
 import EditRolModal from "@/app/components/EditRolModal";
 import DeleteUserModal from "@/app/components/DeleteUserModal";
 import { MdEdit } from "react-icons/md";
+import Table from "@/app/components/Table";
+import Header from "@/app/components/Header";
+import { GiCorn } from "react-icons/gi";
 
 interface Cosecha {
   id: number;
@@ -38,6 +41,51 @@ export default function UserProfiles() {
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [userId, setUserId] = useState(0);
   const [dataUser, setDataUser] = useState<User | null>(null);
+
+  const headers = ["Id", "Username", "Nombre", "Apellido", "Rol", ""];
+  const rows = users.map((user) => [
+    user.id,
+    user.username,
+    user.nombre,
+    user.apellido,
+    <>
+      {rols.find((rol) => rol.id === user.rolid)?.nombre}
+      <button
+        onClick={() => {
+          setIsEditRolOpen(true);
+          setDataUser(user);
+        }}
+        title="Editar Rol"
+        className="ml-4"
+      >
+        <MdEdit />
+      </button>
+    </>,
+    <>
+      <button
+        onClick={() => {
+          setIsModalOpen(true);
+          setUserId(user.id);
+        }}
+        title="Ver Cosechas"
+        className="bg-green-300 text-black px-4 py-2 rounded-lg shadow-lg border border-green-500 hover:bg-green-500 mx-2"
+      >
+        <GiCorn size={24}/>
+      </button>
+      <button
+        onClick={() => {
+          setIsDeleteUserModalOpen(true);
+          setDataUser(user);
+        }}
+        title="Eliminar Usuario"
+        className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 hover:bg-red-500 mx-2"
+      >
+        <FaTimes size={24} />
+      </button>
+    </>
+  ]);
+
+
 
   const fetchCosechas = async () => {
     setIsLoading(true);
@@ -96,98 +144,25 @@ export default function UserProfiles() {
     getRols();
   }, []);
 
-  console.log(rols);
+
+  const handleAddButton = () => {
+    setIsRegisterModalOpen(true);
+  };
+
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
-      <div className="bg-blue-500 text-white p-3 rounded-md text-center text-lg font-bold">
-        Perfiles de Usuarios
-      </div>
-
-      {/* Search and Add Buttons */}
-      <div className="flex justify-between my-4">
-        <input
-          type="text"
-          placeholder="Buscar usuario..."
-          className="border p-2 rounded w-full max-w-md text-gray-900"
-        />
-        <div className="flex gap-2">
-          <button className="bg-gray-400 p-2 rounded text-white">
-            <FaSearch />
-          </button>
-          <button 
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
-          onClick={()=>{setIsRegisterModalOpen(true)}}>
-            <FaPlus />
-          </button>
-        </div>
-      </div>
+      <Header
+        title="Perfiles de Usuarios"
+        showSearchBar = {true}
+        showSearchButton = {true}
+        showAddButton = {true}
+        onAdd={handleAddButton}
+      />
 
       {/* User List */}
-      <div className="bg-white p-4 rounded-md shadow-md">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b bg-gray-300 text-gray-800">
-              <th className="p-2">Id</th>
-              <th className="p-2">username</th>
-              <th className="p-2">Nombre</th>
-              <th className="p-2">Apellido</th>
-              <th className="p-2">Rol</th>
-              <th className="p-2">Cosechas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b bg-gray-100 text-gray-900">
-                <td className="p-2 text-center font-semibold">{user.id}</td>
-                <td className="p-2 text-center">
-                  <span>{user.username}</span>
-                </td>
-                <td className="p-2 text-center">
-                  <span>{user.nombre}</span>
-                </td>
-                <td className="p-2 text-center">
-                  <span>{user.apellido}</span>
-                </td>
-                <td className="p-2 text-center">
-                  <span>
-                    {rols.find((rol) => rol.id === user.rolid)?.nombre}
-  
-                  </span>
-                  <button
-                      onClick={()=> {
-                        setIsEditRolOpen(true)
-                        setDataUser(user)}}   
-                      className="ml-4"
-                      >
-                      <MdEdit />
-                  </button>
-                  {/* {nationalities.find(nat => nat.id === producer.nacionalidadId)?.nombre || producer.nacionalidadId} */}
-                </td>
-                <td className="p-2 text-center">
-                  <button
-                    onClick={() => {
-                      setIsModalOpen(true);
-                      setUserId(user.id);
-                    }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg"
-                  >
-                    Ver Cosechas
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={()=>{
-                      setIsDeleteUserModalOpen(true);
-                      setDataUser(user);
-                    }}>
-                    <FaTimes color="red"/>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      
+      <Table headers={headers} rows={rows} />
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {isLoading ? (
           <Loader />

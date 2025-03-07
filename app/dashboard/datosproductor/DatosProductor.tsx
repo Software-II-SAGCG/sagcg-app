@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { FaSearch, FaTimes, FaEdit } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import Table from "@/app/components/Table";
+import Header from "@/app/components/Header";
 
 interface Producer {
   id: number;
@@ -53,6 +55,47 @@ export default function DatosProductor() {
     null
   );
 
+  const headers = [
+    "ID",
+    "Nombre",
+    "Apellido",
+    "Cédula",
+    "Nacionalidad",
+    "Teléfono",
+    "Dirección 1",
+    "Dirección 2",
+    "Tipo",
+    ""
+  ];
+
+  const rows = producers.map((producer) => [
+    producer.id,
+    producer.nombre,
+    producer.apellido,
+    producer.cedula,
+    nationalities.find((nat) => nat.id === producer.nacionalidadId)?.nombre || producer.nacionalidadId,
+    producer.telefonoLocal,
+    producer.direccion1,
+    producer.direccion2,
+    producerTypes.find((tp) => tp.id === producer.tipoid)?.nombre || producer.tipoid,
+    <>
+      <button
+        onClick={() => openEditModal(producer)}
+        className="bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 mx-2 hover:bg-yellow-500"
+        title="Editar Productor"
+      >
+        <MdEdit size={20}/>
+      </button>
+      <button
+        onClick={() => handleDelete(producer)}
+        className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 mx-2 hover:bg-red-500"
+        title="Eliminar Productor"
+      >
+        <FaTimes size={20}/>
+      </button>
+    </>
+  ]);
+  
   // Consultar datos al cargar el componente
   useEffect(() => {
     fetchProducers();
@@ -237,103 +280,29 @@ export default function DatosProductor() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchId(e.target.value);
+  };
+
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
-      <div className="bg-blue-500 text-white p-3 rounded-md text-center text-lg font-bold">
-        Datos del Productor
-      </div>
-      <div className="p-4">
-        {/* Botón Agregar y Buscador */}
-        <div className="flex justify-between items-center  text-black mb-4">
-          <div className="flex items-center">
-            <button
-              onClick={openAddModal}
-              className="bg-green-500 text-black px-4 py-2 rounded-full mr-2"
-            >
-              +
-            </button>
-            <input
-              type="text"
-              placeholder="Buscar por ID"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
-              className="border p-2 rounded-md"
-            />
-            <button
-              onClick={handleSearch}
-              className="bg-gray-400 p-2 rounded text-white"
-            >
-              <FaSearch />
-            </button>
-            {/* <button
-              onClick={handleSearch}
-              className="bg-blue-500 text-black px-4 py-2 rounded-md ml-2"
-            >
-              Buscar
-            </button> */}
-          </div>
-        </div>
+      <Header 
+      title="Datos del productor"
+      showSearchBar={true}
+      showSearchButton={true}
+      showAddButton={true}
+      searchValue={searchId}
+      onSearchChange={handleSearchChange}
+      onSearch={handleSearch}
+      onAdd={openAddModal}
+      />
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {message && <p className="text-green-500 mb-4">{message}</p>}
 
         {/* Lista de Productores */}
-        <div className="overflow-x-auto bg-white p-4 rounded-md shadow-md">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-gray-300 text-gray-800">
-                <th className="p-2">ID</th>
-                <th className="p-2">Nombre</th>
-                <th className="p-2">Apellido</th>
-                <th className="p-2">Cédula</th>
-                <th className="p-2">Nacionalidad</th>
-                <th className="p-2">Teléfono</th>
-                <th className="p-2">Dirección 1</th>
-                <th className="p-2">Dirección 2</th>
-                <th className="p-2">Tipo</th>
-                <th className="p-2">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {producers.map((producer) => (
-                <tr className="border-b bg-gray-100 text-gray-900" key={producer.id}>
-                  <td className="border p-2">{producer.id}</td>
-                  <td className="border p-2">{producer.nombre}</td>
-                  <td className="border p-2">{producer.apellido}</td>
-                  <td className="border p-2">{producer.cedula}</td>
-                  <td className="border p-2">
-                    {nationalities.find(
-                      (nat) => nat.id === producer.nacionalidadId
-                    )?.nombre || producer.nacionalidadId}
-                  </td>
-                  <td className="border p-2">{producer.telefonoLocal}</td>
-                  <td className="border p-2">{producer.direccion1}</td>
-                  <td className="border p-2">{producer.direccion2}</td>
-                  <td className="border p-2">
-                    {producerTypes.find((tp) => tp.id === producer.tipoid)
-                      ?.nombre || producer.tipoid}
-                  </td>
-                  <td className="p-2 flex space-x-2 mt-2">
-                    <button
-                      onClick={() => openEditModal(producer)}
-                      className="bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500"
-                      title="Editar Productor"
-                    >
-                      <MdEdit size={24}/>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(producer)}
-                      className="bg-red-400 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500"
-                      title="Eliminar Productor"
-                    >
-                      <FaTimes size={24}/>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        
+        <Table headers={headers} rows={rows} />
 
         {/* Modal para Agregar/Editar */}
         {showModal && (
@@ -459,6 +428,5 @@ export default function DatosProductor() {
           </div>
         )}
       </div>
-    </div>
   );
 }
