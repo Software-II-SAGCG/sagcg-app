@@ -13,39 +13,34 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const {nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid } = JSON.parse(body);
+    const { nombre, estado, fechaInicio, fechaCierre } = JSON.parse(body);
 
-    if (!nombre || !apellido || !cedula || !nacionalidadId || !telefonoLocal || !direccion1 || !direccion2 || !tipoid) {
-      return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
+    if (!nombre) {
+      return new NextResponse(JSON.stringify({ error: "El nombre es obligatorio" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const data = {
-        nombre, 
-        apellido, 
-        cedula, 
-        nacionalidadId, 
-        telefonoLocal, 
-        direccion1, 
-        direccion2, 
-        tipoid
-    }
-    
-    const productor = await prisma.productor.create({data});
+      nombre,
+      estado,
+      fechaInicio: fechaInicio ? new Date(fechaInicio) : null,
+      fechaCierre: fechaCierre ? new Date(fechaCierre) : null,
+    };
 
-    return new NextResponse(JSON.stringify({ message: "Productor agregado con éxito", productor }), {
+    const cosecha = await prisma.cosecha.create({ data });
+
+    return new NextResponse(JSON.stringify({ message: "Cosecha creada con éxito", cosecha }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
 
     const status = 500;
-    let message = "Error al agregar el productor";
+    let message = "Error al crear la cosecha";
 
     if (error.name === "PrismaClientKnownRequestError") {
       message = "Error en la base de datos.";
