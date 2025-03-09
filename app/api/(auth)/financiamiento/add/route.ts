@@ -13,44 +13,28 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const {
-      fecha,
-      precio,
-      cantidad,
-      humedad,
-      merma,
-      mermaKg,
-      cantidadTotal,
-      montoTotal,
-      observaciones,
-      rubroId,
-      productorId,
-    } = JSON.parse(body);
+    const { fechaInicio, fechaVencimiento, noLetra, monto, estado, observaciones, productorId } = JSON.parse(body);
 
-    if (!fecha || !rubroId || !productorId) {
-      return new NextResponse(JSON.stringify({ error: "Fecha, rubroId y productorId son obligatorios" }), {
+    if (!fechaInicio || !fechaVencimiento || !noLetra || !productorId) {
+      return new NextResponse(JSON.stringify({ error: "fechaInicio, fechaVencimiento, noLetra y productorId son obligatorios" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const data = {
-      fecha: new Date(fecha),
-      precio: precio || 0.00,
-      cantidad: cantidad || 0.00,
-      humedad: humedad || 0.00,
-      merma: merma || 0.00,
-      mermaKg: mermaKg || 0.00,
-      cantidadTotal: cantidadTotal || 0.00,
-      montoTotal: montoTotal || 0.00,
+      fechaInicio: new Date(fechaInicio),
+      fechaVencimiento: new Date(fechaVencimiento),
+      noLetra,
+      monto: monto || 0.00,
+      estado: estado || false,
       observaciones: observaciones || "",
-      rubroId,
       productorId,
     };
 
-    const compra = await prisma.compra.create({ data });
+    const financiamiento = await prisma.financiamiento.create({ data });
 
-    return new NextResponse(JSON.stringify({ message: "Compra creada con éxito", compra }), {
+    return new NextResponse(JSON.stringify({ message: "Financiamiento creado con éxito", financiamiento }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
@@ -58,7 +42,7 @@ export async function POST(req: NextRequest) {
     console.error(error);
 
     const status = 500;
-    let message = "Error al crear la compra";
+    let message = "Error al crear el financiamiento";
 
     if (error.name === "PrismaClientKnownRequestError") {
       message = "Error en la base de datos.";
