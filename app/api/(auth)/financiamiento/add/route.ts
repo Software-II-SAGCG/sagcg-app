@@ -1,5 +1,7 @@
+import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+
+const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,39 +13,36 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const {nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid } = JSON.parse(body);
+    const { fechaInicio, fechaVencimiento, noLetra, monto, estado, observaciones, productorId } = JSON.parse(body);
 
-    if (!nombre || !apellido || !cedula || !nacionalidadId || !telefonoLocal || !direccion1 || !direccion2 || !tipoid) {
-      return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
+    if (!fechaInicio || !fechaVencimiento || !noLetra || !productorId) {
+      return new NextResponse(JSON.stringify({ error: "fechaInicio, fechaVencimiento, noLetra y productorId son obligatorios" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const data = {
-        nombre, 
-        apellido, 
-        cedula, 
-        nacionalidadId, 
-        telefonoLocal, 
-        direccion1, 
-        direccion2, 
-        tipoid
-    }
-    
-    const productor = await prisma.productor.create({data});
+      fechaInicio: new Date(fechaInicio),
+      fechaVencimiento: new Date(fechaVencimiento),
+      noLetra,
+      monto: monto || 0.00,
+      estado: estado || false,
+      observaciones: observaciones || "",
+      productorId,
+    };
 
-    return new NextResponse(JSON.stringify({ message: "Productor agregado con éxito", productor }), {
+    const financiamiento = await prisma.financiamiento.create({ data });
+
+    return new NextResponse(JSON.stringify({ message: "Financiamiento creado con éxito", financiamiento }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
 
     const status = 500;
-    let message = "Error al agregar el productor";
+    let message = "Error al crear el financiamiento";
 
     if (error.name === "PrismaClientKnownRequestError") {
       message = "Error en la base de datos.";

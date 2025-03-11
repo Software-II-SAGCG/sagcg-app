@@ -25,6 +25,7 @@ model Usuario {
   rolid         Int
   rol           Rol      @relation(fields: [rolid], references: [id])
   cosechas      CosechaUsuario[]
+  logger        Logger[]
 }
 
 model Rol {
@@ -54,6 +55,7 @@ model TipoProductor {
   id     Int      @id @default(autoincrement())
   nombre String   @unique
   productor Productor[]
+  precio    Float @default(0.00) 
 }
 
 model Productor {
@@ -68,6 +70,8 @@ model Productor {
   direccion2    String
   tipoid    Int
   tipo      TipoProductor     @relation(fields: [tipoid], references: [id])
+  compraId  Compra[]
+  financiamientoId Financiamiento[]
 }
 
 model Nacionalidad {
@@ -80,6 +84,9 @@ model Cosecha {
   id        Int      @id @default(autoincrement())
   nombre    String
   usuarios  CosechaUsuario[]
+  estado    Boolean?
+  fechaInicio   DateTime?
+  fechaCierre  DateTime?
 }
 
 model CosechaUsuario {
@@ -88,4 +95,47 @@ model CosechaUsuario {
   usuario   Usuario? @relation(fields: [usuarioId], references: [id])
   usuarioId Int
   @@id([cosechaId, usuarioId])
+}
+
+model Rubro {
+    id  Int     @id @default(autoincrement())
+    descripcion String
+    compra  Compra[]
+}
+
+model Compra {
+    id      Int     @id @default(autoincrement())
+    fecha   DateTime
+    precio  Float @default(0.00) 
+    cantidad Float @default(0.00)
+    humedad Float @default(0.00) 
+    merma   Float @default(0.00)
+    mermaKg Float @default(0.00) 
+    cantidadTotal Float @default(0.00) 
+    montoTotal  Float @default(0.00)
+    observaciones String
+    rubroId Int
+    rubro    Rubro @relation(fields: [rubroId], references: [id])
+    productorId Int
+    productor Productor @relation(fields: [productorId], references: [id])
+}
+
+model Financiamiento {
+    id      Int     @id @default(autoincrement())
+    fechaInicio   DateTime
+    fechaVencimiento DateTime
+    noLetra String
+    monto   Float @default(0.00)
+    estado  Boolean
+    observaciones String
+    productorId Int
+    productor Productor @relation(fields: [productorId], references: [id])
+}
+
+model Logger {
+    id      Int     @id @default(autoincrement())
+    modulo String
+    fecha   DateTime
+    usuarioId Int
+    usuario Usuario @relation(fields: [usuarioId], references: [id])
 }
