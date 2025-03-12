@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,10 +38,11 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
 
-    let status = 500;
+    const status = 500;
     let message = "Error al agregar el productor";
 
     if (error.name === "PrismaClientKnownRequestError") {

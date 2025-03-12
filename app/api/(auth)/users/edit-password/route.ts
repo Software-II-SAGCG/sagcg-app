@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
 
 
 export async function PUT(req: NextRequest) {
@@ -28,7 +29,7 @@ export async function PUT(req: NextRequest) {
   } catch (error: unknown) {
     console.error('Error al actualizar el usuario:', error);
 
-    let status = 500;
+    const status = 500;
     let message = 'Error al actualizar usuario';
 
     if (error instanceof Prisma.PrismaClientKnownRequestError){
