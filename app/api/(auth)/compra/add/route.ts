@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       observaciones,
       rubroId,
       productorId,
+      cosechaId,
     } = JSON.parse(body);
 
     if (!fecha || !rubroId || !productorId) {
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
       observaciones: observaciones || "",
       rubroId,
       productorId,
+      cosechaId
     };
 
     const compra = await prisma.compra.create({ data });
