@@ -84,9 +84,10 @@ model Cosecha {
   id        Int      @id @default(autoincrement())
   nombre    String
   usuarios  CosechaUsuario[]
-  estado    Boolean?
-  fechaInicio   DateTime?
-  fechaCierre  DateTime?
+  estado    Boolean
+  fechaInicio   DateTime
+  fechaCierre  DateTime
+  compra    Compra[]
 }
 
 model CosechaUsuario {
@@ -118,6 +119,8 @@ model Compra {
     rubro    Rubro @relation(fields: [rubroId], references: [id])
     productorId Int
     productor Productor @relation(fields: [productorId], references: [id])
+    cosechaId   Int?
+    cosecha     Cosecha? @relation(fields: [cosechaId], references: [id])
 }
 
 model Financiamiento {
