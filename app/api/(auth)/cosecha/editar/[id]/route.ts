@@ -21,8 +21,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       data: {
         nombre,
         estado,
-        fechaInicio: fechaInicio ? new Date(fechaInicio) : null,
-        fechaCierre: fechaCierre ? new Date(fechaCierre) : null,
+        fechaInicio: fechaInicio ? new Date(fechaInicio) : new Date(),
+        fechaCierre: fechaCierre ? new Date(fechaCierre) : new Date(),
       },
     });
 

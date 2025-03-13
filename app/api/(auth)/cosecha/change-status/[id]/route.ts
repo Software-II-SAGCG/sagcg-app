@@ -3,9 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const { id } = params;
     const body = await req.text();
+
     if (!body) {
       return new NextResponse(JSON.stringify({ error: "El cuerpo de la solicitud está vacío" }), {
         status: 400,
@@ -13,34 +15,31 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { nombre, estado, fechaInicio, fechaCierre } = JSON.parse(body);
+    const { estado } = JSON.parse(body);
 
-    if (!nombre) {
-      return new NextResponse(JSON.stringify({ error: "El nombre es obligatorio" }), {
+    // Validación de que se envíe el estado
+    if (typeof estado !== "boolean") {
+      return new NextResponse(JSON.stringify({ error: "El estado es obligatorio y debe ser un valor booleano." }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const data = {
-      nombre,
-      estado: estado ?? true,
-      fechaInicio: fechaInicio ? new Date(fechaInicio) : new Date(),
-      fechaCierre: fechaCierre ? new Date(fechaCierre) : new Date(),
-    };
+    // Actualización solo del campo "estado"
+    const cosechaActualizada = await prisma.cosecha.update({
+      where: { id: parseInt(id) },
+      data: { estado },
+    });
 
-    const cosecha = await prisma.cosecha.create({ data });
-
-    return new NextResponse(JSON.stringify({ message: "Cosecha creada con éxito", cosecha }), {
-      status: 201,
+    return new NextResponse(JSON.stringify({ message: "Estado de la cosecha actualizado con éxito", cosechaActualizada }), {
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error(error);
+    console.error("Error al actualizar el estado de la cosecha:", error);
 
     const status = 500;
-    let message = "Error al crear la cosecha";
+    let message = "Error al actualizar la cosecha";
 
     if (error.name === "PrismaClientKnownRequestError") {
       message = "Error en la base de datos.";
