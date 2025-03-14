@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 
+
 export default function RegisterForm() {
   const [username, setUsername] = useState("");
   const [nombre, setNombre] = useState("");
