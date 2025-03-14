@@ -3,6 +3,10 @@
 import { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { BiPurchaseTagAlt } from "react-icons/bi";
+import { LuClipboardList } from "react-icons/lu";
+import { FaPlay } from "react-icons/fa";
+import { AiOutlineStop } from "react-icons/ai";
 import Table from "@/app/components/Table";
 import Header from "@/app/components/Header";
 
@@ -11,20 +15,13 @@ interface Harvest {
   nombre: string;
   fechaInicio: string;
   fechaCierre: string;
-}
-
-interface HarvestType {
-  id: number;
-  nombre: string;
+  estado: boolean;
 }
 
 export default function HarvestPortfolio() {
   const [harvest, setHarvest] = useState<Harvest[]>([]);
-  const [harvestTypes, setHarvestTypes] = useState<HarvestType[]>([]);
   const [searchId, setSearchId] = useState("");
-  const [selectedProducer, setSelectedProducer] = useState<Harvest | null>(
-    null
-  );
+  const [selectedHarvest, setSelectedHarvest] = useState<Harvest | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,57 +33,79 @@ export default function HarvestPortfolio() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [harvestToDelete, setHarvestToDelete] = useState<Harvest | null>(
-    null
-  );
+  const [harvestToDelete, setHarvestToDelete] = useState<Harvest | null>(null);
 
-  const headers = [
-    "ID",
-    "Descripcion",
-    "Inicio",
-    "Cierre",
-    "",
-  ];
+  const headers = ["ID", "Descripcion", "Inicio", "Cierre", ""];
 
   const rows = harvest.map((harvest) => [
     harvest.id,
     harvest.nombre,
-    harvest.fechaInicio,
-    harvest.fechaCierre,
-    harvestTypes.find((tp) => tp.id === harvest.id)?.nombre ||
-      harvest.id,
+    new Date(harvest.fechaInicio).toISOString().split("T")[0],
+    new Date(harvest.fechaCierre).toISOString().split("T")[0],
     <>
       <button
         onClick={() => openEditModal(harvest)}
-        className="bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 mx-2 hover:bg-yellow-500"
+        className={`bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 mx-2 hover:bg-yellow-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
         title="Editar Cosecha"
+        disabled={!harvest.estado}
       >
         <MdEdit size={20} />
       </button>
       <button
         onClick={() => handleDelete(harvest)}
-        className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 mx-2 hover:bg-red-500"
+        className={`bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 mx-2 hover:bg-red-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
         title="Eliminar Cosecha"
+        disabled={!harvest.estado}
       >
         <FaTimes size={20} />
       </button>
+      <button
+        className={`bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
+        title="Generar Compras"
+        disabled={!harvest.estado}
+      >
+        <BiPurchaseTagAlt size={20} />
+      </button>
+      <button
+        className={`bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
+        title="Listar Compras"
+        disabled={!harvest.estado}
+      >
+        <LuClipboardList size={20} />
+      </button>
+      {harvest.estado ? (
+        <button
+          onClick={() => handleChangeStatus(harvest, false)}
+          className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 mx-2 hover:bg-red-500"
+          title="Cerrar Cosecha"
+        >
+          <AiOutlineStop size={20} />
+        </button>
+      ) : (
+        <button
+          onClick={() => handleChangeStatus(harvest, true)}
+          className="bg-green-300 text-black px-4 py-2 rounded-lg shadow-lg border border-green-500 mx-2 hover:bg-green-500"
+          title="Habilitar Cosecha"
+        >
+          <FaPlay size={20} />
+        </button>
+      )}
     </>,
   ]);
 
   // Consultar datos al cargar el componente
   useEffect(() => {
-    fetchProducers();
-    fetchHarvestTypes();
+    fetchHarvest();
   }, []);
 
-  const fetchProducers = async () => {
+  const fetchHarvest = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/producers");
+      const res = await fetch("http://localhost:3000/api/cosecha/obtener");
       const data = await res.json();
       if (res.ok) {
         setHarvest(data);
       } else {
-        setError("Error al cargar productores.");
+        setError("Error al cargar cosechas.");
       }
     } catch (err) {
       console.error(err);
@@ -94,26 +113,11 @@ export default function HarvestPortfolio() {
     }
   };
 
-
-  const fetchHarvestTypes = async () => {
-    try {
-      const res = await fetch(
-        "http://localhost:3000/api/producers/types-producer"
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setHarvestTypes(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleSearch = async () => {
     if (!searchId) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/api/producers/${searchId}`
+        `http://localhost:3000/api/cosecha/obtener/${searchId}`
       );
       const data = await res.json();
       if (res.ok) {
@@ -140,11 +144,11 @@ export default function HarvestPortfolio() {
 
   const openEditModal = (harvest: Harvest) => {
     setIsEditMode(true);
-    setSelectedProducer(harvest);
+    setSelectedHarvest(harvest);
     setFormData({
       nombre: harvest.nombre,
-      fechaInicio: harvest.fechaInicio,
-      fechaCierre: harvest.fechaCierre,
+      fechaInicio: new Date(harvest.fechaInicio).toISOString().split("T")[0],
+      fechaCierre: new Date(harvest.fechaCierre).toISOString().split("T")[0],
       id: harvest.id.toString(),
     });
     setShowModal(true);
@@ -159,7 +163,7 @@ export default function HarvestPortfolio() {
     if (!harvestToDelete) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/api/producers/${harvestToDelete.id}`,
+        `http://localhost:3000/api/cosecha/delete/${harvestToDelete.id}`,
         {
           method: "DELETE",
         }
@@ -185,14 +189,13 @@ export default function HarvestPortfolio() {
       nombre: formData.nombre,
       fechaInicio: formData.fechaInicio,
       fechaCierre: formData.fechaCierre,
-      id: parseInt(formData.id),
     };
 
     try {
       let res;
-      if (isEditMode && selectedProducer) {
+      if (isEditMode && selectedHarvest) {
         res = await fetch(
-          `http://localhost:3000/api/producers/${selectedProducer.id}`,
+          `http://localhost:3000/api/cosecha/editar/${selectedHarvest.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -200,7 +203,7 @@ export default function HarvestPortfolio() {
           }
         );
       } else {
-        res = await fetch("http://localhost:3000/api/producers/add-producer", {
+        res = await fetch("http://localhost:3000/api/cosecha/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -213,7 +216,7 @@ export default function HarvestPortfolio() {
             : "Cosecha agregada exitosamente."
         );
         setShowModal(false);
-        fetchProducers();
+        fetchHarvest();
       } else {
         const data = await res.json();
         setError(data.error || "Error al guardar cosecha.");
@@ -235,6 +238,25 @@ export default function HarvestPortfolio() {
     setSearchId(e.target.value);
   };
 
+  const handleChangeStatus = async (harvest: Harvest, newStatus: boolean) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/cosecha/change-status/${harvest.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado: newStatus }),
+      });
+      if (res.ok) {
+        setMessage(`Cosecha ${newStatus ? "habilitada" : "cerrada"} exitosamente.`);
+        fetchHarvest();
+      } else {
+        setError("Error al cambiar el estado de la cosecha.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error en la conexión al servidor.");
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <Header
@@ -251,11 +273,10 @@ export default function HarvestPortfolio() {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {message && <p className="text-green-500 mb-4">{message}</p>}
 
-      {/* Lista de Productores */}
+      {/* Lista de Cosechas */}
 
-      <Table headers={headers} rows={rows} />
+      <Table headers ={headers} rows={rows} />
 
-      {/* Modal para Agregar/Editar */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
           <div className="bg-white text-black p-6 rounded-md w-96 shadow-lg">
@@ -263,6 +284,7 @@ export default function HarvestPortfolio() {
               {isEditMode ? "Editar Cosecha" : "Agregar Cosecha"}
             </h2>
             <form onSubmit={handleFormSubmit} className="flex flex-col">
+              <label htmlFor="nombre" className="mb-1">Nombre</label>
               <input
                 type="text"
                 name="nombre"
@@ -271,6 +293,7 @@ export default function HarvestPortfolio() {
                 onChange={handleInputChange}
                 className="border p-2 mb-2 rounded-md text-black"
               />
+              <label htmlFor="fechaInicio" className="mb-1">Fecha de Inicio</label>
               <input
                 type="date"
                 name="fechaInicio"
@@ -279,6 +302,7 @@ export default function HarvestPortfolio() {
                 onChange={handleInputChange}
                 className="border p-2 mb-2 rounded-md text-black"
               />
+              <label htmlFor="fechaCierre" className="mb-1">Fecha de Cierre</label>
               <input
                 type="date"
                 name="fechaCierre"
@@ -304,7 +328,6 @@ export default function HarvestPortfolio() {
         </div>
       )}
 
-      {/* Modal de confirmación para eliminar */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50">
           <div className="bg-white text-black p-6 items-center rounded-md w-96 shadow-lg">
