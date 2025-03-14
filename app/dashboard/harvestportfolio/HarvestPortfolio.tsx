@@ -10,6 +10,7 @@ import { AiOutlineStop } from "react-icons/ai";
 import Table from "@/app/components/Table";
 import Header from "@/app/components/Header";
 import Compras from "./compras";
+import ListadoCompras from "./listadoCompra";
 
 interface Harvest {
   id: number;
@@ -25,6 +26,7 @@ export default function HarvestPortfolio() {
   const [selectedHarvest, setSelectedHarvest] = useState<Harvest | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showCompras, setShowCompras] = useState(false);
+  const [showListadoCompra, setShowListadoCompra] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
@@ -69,7 +71,14 @@ export default function HarvestPortfolio() {
       >
         <BiPurchaseTagAlt size={20} />
       </button>
+      {showListadoCompra && (
+        <ListadoCompras
+          cosechaId={harvest.id}         
+          onClose={() => setShowListadoCompra(false)}
+        />
+      )}
       <button
+        onClick={() => setShowListadoCompra(true)}
         className={`bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
         title="Listar Compras"
         disabled={!harvest.estado}
