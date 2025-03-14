@@ -24,6 +24,19 @@ interface ComprasProps {
 }
 
 export default function Compras({ cosechaId, onClose }: ComprasProps) {
+
+  interface Rubro {
+    id: number;
+    descripcion: string;
+  }
+
+  interface Productor {
+    id: number;
+    nombre: string;
+    apellido: string;
+    tipoProductor: string;
+  }
+
   const [compras, setCompras] = useState<Compra[]>([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -35,8 +48,39 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
   const [humedad, setHumedad] = useState("");
   const [merma, setMerma] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [rubroId, setRubroId] = useState("");
-  const [productorId, setProductorId] = useState("");
+  const [rubroId, setRubroId] = useState<number | null>(null);
+  const [productorId, setProductorId] = useState<number | null>(null);
+  const [rubros, setRubros] = useState<Rubro[]>([]);
+  const [productores, setProductores] = useState<Productor[]>([]);
+
+  const getRubros = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/compra/get-rubros");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setRubros(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getProductores = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/compra/get-producers");
+      if (!response.ok){
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setProductores(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
 
   // Cálculos automáticos
   const mermaKg = cantidad && merma
@@ -68,6 +112,8 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
 
   useEffect(() => {
     fetchCompras();
+    getRubros();
+    getProductores();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -88,8 +134,8 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
         cantidadTotal,
         montoTotal,
         observaciones,
-        rubroId: parseInt(rubroId),
-        productorId: parseInt(productorId),
+        rubroId: rubroId,
+        productorId: productorId,
         cosechaId,
       };
 
@@ -111,8 +157,8 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
       setHumedad("");
       setMerma("");
       setObservaciones("");
-      setRubroId("");
-      setProductorId("");
+      setRubroId(null);
+      setProductorId(null);
 
       // Recargar la lista
       fetchCompras();
@@ -174,26 +220,39 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
             />
           </div>
           <div>
-            <label className="block font-semibold">Cédula / Prod. ID:</label>
-            <input
-              type="number"
-              value={productorId}
-              onChange={(e) => setProductorId(e.target.value)}
-              className="border p-2 rounded-md w-full"
-              placeholder="Ej: 7764567"
-              required
-            />
+            <label className="block font-semibold">Productor:</label>
+            <select 
+              name="productorId" 
+              value={productorId ?? ''}
+              onChange={(e:React.ChangeEvent<HTMLSelectElement>) => setProductorId(Number(e.target.value))}
+              className= "border p-2 rounded-md w-full"
+            >
+              <option value="" disabled> Selecciona un productor</option>
+              {productores.map((productor) => (
+                <option key={productor.id} value={productor.id}>
+                  {productor.nombre} {productor.apellido} - {productor.tipoProductor}
+                </option>
+              ))}
+            </select>
+
           </div>
           <div>
-            <label className="block font-semibold">Tipo de Rubro (rubroId):</label>
-            <input
-              type="number"
-              value={rubroId}
-              onChange={(e) => setRubroId(e.target.value)}
-              className="border p-2 rounded-md w-full"
-              placeholder="Ej: 1, 2..."
-              required
-            />
+            <label className="block font-semibold">Tipo de Rubro:</label>
+            <select 
+              name="rubroId" 
+              value={rubroId ?? ''}
+              onChange={(e:React.ChangeEvent<HTMLSelectElement>) => setRubroId(Number(e.target.value))}
+              className= "border p-2 rounded-md w-full"
+            >
+              <option value="" disabled> Selecciona un rubro</option>
+              {rubros.map((rubro) => (
+                <option key={rubro.id} value={rubro.id}>
+                  {rubro.descripcion}
+                </option>
+              ))}
+            </select>
+
+
           </div>
 
           <div>

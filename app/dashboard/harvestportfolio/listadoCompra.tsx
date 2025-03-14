@@ -3,12 +3,13 @@ import { getCompras } from '../../services/compraService';
 
 /* Props del Modal */
 interface ListadoComprasProps {
+  cosechaId: number;
   onClose: () => void; // Función para cerrar el Modal
 }
 
-const ListadoCompras: React.FC<ListadoComprasProps> = ({ onClose }) => {
+const ListadoCompras: React.FC<ListadoComprasProps> = ({ cosechaId, onClose }) => {
   const { data, error, isLoading } = useQuery({
-    queryKey: ['compras'],
+    queryKey: ['compras', cosechaId],
     queryFn: getCompras
   });
 
