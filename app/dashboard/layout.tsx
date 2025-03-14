@@ -1,7 +1,7 @@
 "use client";
 import Sidebar from "../components/Sidebar";
 import { AuthProvider } from "../context/AuthContext";
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
