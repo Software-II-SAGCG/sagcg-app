@@ -71,11 +71,7 @@ export default function HarvestPortfolio() {
       >
         <BiPurchaseTagAlt size={20} />
       </button>
-      {showListadoCompra && (
-        <ListadoCompras      
-          onClose={() => setShowListadoCompra(false)}
-        />
-      )}
+      
       <button
         onClick={() => setShowListadoCompra(true)}
         className={`bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
