@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { getCompras } from '../../services/compraService';3
+import { getCompras } from '../../services/compraService';
 
-interface listadoComprasProps {
-    cosechaId: number;         // ID de la cosecha
+interface listadoComprasProps {         // ID de la cosecha
     onClose: () => void;       // Función para cerrar la ventana
   }
 
-const ListadoCompras = ({ cosechaId, onClose }: listadoComprasProps) => {
+const ListadoCompras = ({ onClose }: listadoComprasProps) => {
   const { data, error, isLoading } = useQuery({
     queryKey: ['compras'],
     queryFn: getCompras

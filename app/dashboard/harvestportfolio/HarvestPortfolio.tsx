@@ -72,8 +72,7 @@ export default function HarvestPortfolio() {
         <BiPurchaseTagAlt size={20} />
       </button>
       {showListadoCompra && (
-        <ListadoCompras
-          cosechaId={harvest.id}         
+        <ListadoCompras      
           onClose={() => setShowListadoCompra(false)}
         />
       )}
