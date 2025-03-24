@@ -65,7 +65,9 @@ export default function HarvestPortfolio() {
         <FaTimes size={20} />
       </button>
       <button
-        onClick={() => setShowCompras(true)}
+        onClick={() => {
+          setShowCompras(true);
+          setSelectedHarvestId(harvest.id);}}
         className={`bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500 ${!harvest.estado ? "opacity-50 cursor-not-allowed" : ""}`}
         title="Generar Compras"
         disabled={!harvest.estado}
@@ -92,7 +94,7 @@ export default function HarvestPortfolio() {
       )}
       {showCompras && (
         <Compras
-          cosechaId={harvest.id}          // El ID de la cosecha que corresponda
+          cosechaId={selectedHarvestId!}          // El ID de la cosecha que corresponda
           onClose={() => setShowCompras(false)}
         />
       )}

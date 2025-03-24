@@ -5,31 +5,33 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params; 
+    const { id } = params;
 
-    const compra = await prisma.compra.findUnique({
-      where: { id: parseInt(id) },
+    const cosechaId = parseInt(id);
+
+    const compras = await prisma.compra.findMany({
+      where: { cosechaId },
       include: { 
-        rubro: true, 
-        productor: true 
+        rubro: true,
+        productor: true
       }
     });
 
-    if (!compra) {
-      return new NextResponse(JSON.stringify({ error: "Compra no encontrada" }), {
-        status: 404,
+    if (!compras ) {
+      return new NextResponse(JSON.stringify({message: "No se encontraron compras para esta cosecha"}), {
+        status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    return new NextResponse(JSON.stringify(compra), {
+    return new NextResponse(JSON.stringify(compras), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: any) {
     console.error(error);
 
-    return new NextResponse(JSON.stringify({ error: "Error al obtener la compra" }), {
+    return new NextResponse(JSON.stringify({ error: "Error al obtener las compras" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

@@ -1,41 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
 import { getCompras } from '../../services/compraService';
+import { FiPrinter } from "react-icons/fi";
+import Loader from '@/app/components/Loader';
 
 /* Props del Modal */
 interface ListadoComprasProps {
   cosechaId: number;
-  onClose: () => void; // Función para cerrar el Modal
+  onClose: () => void; 
 }
 
 const ListadoCompras: React.FC<ListadoComprasProps> = ({ cosechaId, onClose }) => {
   const { data, error, isLoading } = useQuery({
     queryKey: ['compras', cosechaId],
-    queryFn: getCompras
+    queryFn: () => getCompras(cosechaId),
+    enabled: !!cosechaId
   });
 
-  // Fetch para Cantidad Total de Kg Recolectados
-  const { data: totalKgData, isLoading: isLoadingKg } = useQuery({
-    queryKey: ['totalKg'],
+  const {data: totalesData, isLoading: isLoadingTotales } = useQuery({
+    queryKey: ['totales', cosechaId],
     queryFn: async () => {
-      const response = await fetch('/api/compra/total/cantidadTotal');
+      const response = await fetch(`/api/compra/total/${cosechaId}`);
       const result = await response.json();
-      return result.sumaTotalKg;
+      return result;
     }
-  });
+  })
 
-  // Fetch para Monto Total Invertido
-  const { data: totalMontoData, isLoading: isLoadingMonto } = useQuery({
-    queryKey: ['totalMonto'],
-    queryFn: async () => {
-      const response = await fetch('/api/compra/total/totalInvertido');
-      const result = await response.json();
-      return result.montoTotalInvertido;
-    }
-  });
-
-  if (isLoading) return <p>Cargando compras...</p>;
   if (error) return <p>Error al cargar las compras</p>;
-
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-auto relative flex items-center justify-center">
+          <Loader />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-full h-full bg-white rounded-lg shadow-lg overflow-auto relative">
@@ -66,32 +65,55 @@ const ListadoCompras: React.FC<ListadoComprasProps> = ({ cosechaId, onClose }) =
                 </tr>
               </thead>
               <tbody>
-                {data?.map((compra: any) => (
-                  <tr key={compra.id} className="hover:bg-gray-100">
-                    <td className="p-2 border">{compra.id}</td>
-                    <td className="p-2 border">{new Date(compra.fecha).toLocaleString()}</td>
-                    <td className="p-2 border">{compra.precio.toFixed(2)}</td>
-                    <td className="p-2 border">{compra.cantidad.toFixed(2)}</td>
-                    <td className="p-2 border">{compra.humedad}%</td>
-                    <td className="p-2 border">{compra.merma}%</td>
-                    <td className="p-2 border">{compra.mermaKg.toFixed(2)}</td>
-                    <td className="p-2 border">{compra.cantidadTotal.toFixed(2)}</td>
-                    <td className="p-2 border">{compra.montoTotal.toFixed(2)}</td>
+                {data?.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="p-2 border text-center">
+                      No hay compras para esta cosecha!
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  data?.map((compra: any) => (
+                    <tr key={compra.id} className="hover:bg-gray-100">
+                      <td className="p-2 border">{compra.id}</td>
+                      <td className="p-2 border">{new Date(compra.fecha).toLocaleString()}</td>
+                      <td className="p-2 border">{compra.precio.toFixed(2)}</td>
+                      <td className="p-2 border">{compra.cantidad.toFixed(2)}</td>
+                      <td className="p-2 border">{compra.humedad}%</td>
+                      <td className="p-2 border">{compra.merma}%</td>
+                      <td className="p-2 border">{compra.mermaKg.toFixed(2)}</td>
+                      <td className="p-2 border">{compra.cantidadTotal.toFixed(2)}</td>
+                      <td className="p-2 border">{compra.montoTotal.toFixed(2)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
+
             </table>
           </div>
-
-          {/* Líneas adicionales */}
           <div className="mt-6">
-            <p className="text-lg font-semibold">
-              Cantidad Total de Kg Recolectados: {totalKgData?.toFixed(2)} Kg
-            </p>
-            <p className="text-lg font-semibold">
-              Monto Total Invertido ($): {totalMontoData?.toFixed(2)}
-            </p>
+            {isLoadingTotales ? (
+              <p className="text-lg font-semibold">Cargando...</p>
+            ) : (
+              totalesData && (
+                <>
+                  <p className="text-lg font-semibold">
+                    Cantidad Total de Kg Recolectados: {totalesData.sumaTotalKg?.toFixed(2)} Kg
+                  </p>
+                  <p className="text-lg font-semibold">
+                    Monto Total Invertido ($): {totalesData.montoTotalInvertido?.toFixed(2)}
+                  </p>
+                </>
+              )
+            )}
           </div>
+          {/* Botón para imprimir */}
+          <button
+            onClick={() => window.print()}
+            title='Imprimir'
+            className="absolute top-4 right-20 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 focus:outline-none"
+          >
+            <FiPrinter size={24}/>
+          </button>
         </div>
       </div>
     </div>
