@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -10,6 +9,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     await prisma.cosecha.delete({
       where: { id: parseInt(id) },
     });
+
+    AddLogger('Eliminar', 'Cosecha');
 
     return new NextResponse(JSON.stringify({ message: "Cosecha eliminada con éxito" }), {
       status: 200,

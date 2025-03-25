@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -17,7 +16,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     const { estado } = JSON.parse(body);
 
-    // Validación de que se envíe el estado
     if (typeof estado !== "boolean") {
       return new NextResponse(JSON.stringify({ error: "El estado es obligatorio y debe ser un valor booleano." }), {
         status: 400,
@@ -25,11 +23,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       });
     }
 
-    // Actualización solo del campo "estado"
     const cosechaActualizada = await prisma.cosecha.update({
       where: { id: parseInt(id) },
       data: { estado },
     });
+
+    AddLogger('Cambiar Estado', 'Cosecha');
 
     return new NextResponse(JSON.stringify({ message: "Estado de la cosecha actualizado con éxito", cosechaActualizada }), {
       status: 200,

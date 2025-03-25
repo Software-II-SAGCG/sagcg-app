@@ -10,6 +10,8 @@ import { MdEdit } from "react-icons/md";
 import Table from "@/app/components/Table";
 import Header from "@/app/components/Header";
 import { GiCorn } from "react-icons/gi";
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
 
 interface Cosecha {
   id: number;
@@ -41,6 +43,10 @@ export default function UserProfiles() {
   const [cosechas, setCosechas] = useState<Cosecha[]>([]);
   const [userId, setUserId] = useState(0);
   const [dataUser, setDataUser] = useState<User | null>(null);
+  const [isAssignHarvest, setIsAssignHarvest] = useState(false);
+  const [muestraCosechas, setMuestraCosechas] = useState<Cosecha[]>([]);
+  const [cosechaId, setCosechaId] = useState<number | null>(null);
+  const [showError, setShowError] = useState(false);
 
   const headers = ["Id", "Username", "Nombre", "Apellido", "Rol", ""];
   const rows = users.map((user) => [
@@ -139,15 +145,47 @@ export default function UserProfiles() {
       console.error(err);
     }
   };
+
+  const getCosechas = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/users/get-harvest");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setMuestraCosechas(data);
+    }catch(err){
+      console.error(err);
+    }
+  }
   useEffect(() => {
     getUsers();
     getRols();
+    getCosechas();
   }, []);
 
 
   const handleAddButton = () => {
     setIsRegisterModalOpen(true);
   };
+
+  const handleAssignHarvest = async (cosechaId: number, usuarioId: number) => {
+    try {
+      const response = await fetch("/api/cosecha/assign-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cosechaId, usuarioId }),
+      });
+      if(response.ok){
+        setCosechaId(null);
+        fetchCosechas();
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+    
+  }
 
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
@@ -163,7 +201,7 @@ export default function UserProfiles() {
       
       <Table headers={headers} rows={rows} />
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(false), setIsAssignHarvest(false)}}>
         {isLoading ? (
           <Loader />
         ) : (
@@ -196,15 +234,66 @@ export default function UserProfiles() {
                 </ul>
               </div>
             )}
+            <div className="flex">
+              <button 
+                onClick={()=>setIsAssignHarvest(prev => !prev)}
+                className="text-black flex">
+                ¿Desea asignar alguna cosecha a este usuario?
+                {isAssignHarvest
+                  ? <IoMdArrowDropup size={20}/>
+                  : <IoMdArrowDropdown size={20} />
+                }
+              </button>
+            </div>
+            { isAssignHarvest ? (
+              <div className="mt-4">
+                <select 
+                  name="cosechaId" 
+                  value={cosechaId ?? ''}
+                  onChange={(e:React.ChangeEvent<HTMLSelectElement>) => setCosechaId(Number(e.target.value))}
+                  className= "border p-2 mb-4 rounded-md text-gray-800"
+                >
+                  <option value="" disabled> Selecciona una cosecha</option>
+                    {muestraCosechas
+                    .filter(cos => !cosechas.some(cosecha => cosecha.id === cos.id))
+                    .map((cos) => (
+                      <option key={cos.id} value={cos.id}>
+                        {cos.nombre}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  onClick={()=>{
+                    if (cosechaId != null){
+                      handleAssignHarvest(cosechaId, userId)
+                      setShowError(false)
+                    }else{
+                      setShowError(true);
+                    }
+                    }
+                  }
+                  className="bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 hover:bg-blue-500 ml-8"
+                  title="Asignar Cosecha">
+                    <MdOutlineAssignmentTurnedIn size={20}/>
+                </button>
+                {showError && (
+                  <p className="text-red-500"> Debe seleccionar una cosecha </p>
+                )}
+              </div>
+            ):(
+              <div></div>
+            )
+
+            }
           </>
         )}
       </Modal>
 
-      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => setIsRegisterModalOpen(false)} />
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => {setIsRegisterModalOpen(false), getUsers()}} />
 
       <EditRolModal 
         isOpen={isEditRolModalOpen} 
-        onClose={()=> setIsEditRolOpen(false)} 
+        onClose={()=> {setIsEditRolOpen(false), getUsers()}} 
         dataUser = {dataUser}
         rols={rols}/>
 

@@ -7,17 +7,17 @@ const prisma = new PrismaClient();
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { modulo, usuarioId } = body;
+    const { modulo, evento } = body;
 
-    if (!modulo || !usuarioId) {
-      return NextResponse.json({ error: "Modulo y usuarioId son obligatorios" }, { status: 400 });
+    if (!modulo || !evento) {
+      return NextResponse.json({ error: "Modulo y evento son obligatorios" }, { status: 400 });
     }
 
     const logger = await prisma.logger.create({
       data: {
+        evento,
         modulo,
         fecha: new Date(),
-        usuarioId,
       },
     });
 

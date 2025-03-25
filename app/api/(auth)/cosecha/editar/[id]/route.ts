@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -26,6 +25,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       },
     });
 
+    AddLogger('Editar', 'Cosecha');
+    
     return new NextResponse(JSON.stringify({ message: "Cosecha actualizada con éxito", cosechaActualizada }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

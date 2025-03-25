@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import basicAuth from 'basic-auth';
 import { NextRequest, NextResponse } from 'next/server';
-
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 
 export async function POST(req: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
           headers: { 'Content-Type': 'application/json' },
         });
       }
-
+      AddLogger('Loggear', 'Usuario');
       return new NextResponse(JSON.stringify({ 
         data: usuario,
         message: 'Inicio de sesión exitoso' }), {

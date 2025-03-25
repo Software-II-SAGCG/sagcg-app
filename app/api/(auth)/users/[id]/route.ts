@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger'; 
 
 type Params = {
   id: string;
@@ -53,6 +54,8 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
       },
     });
 
+    AddLogger('Editar', 'Usuario');
+
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error al actualizar el usuario:', error);
@@ -85,6 +88,8 @@ export async function DELETE(req: NextRequest, { params }: {params:Params}) {
     const usuario = await prisma.usuario.delete({
       where: { id: Number(id) },
     });
+
+    AddLogger('Eliminar', 'Usuario');
 
     return NextResponse.json({ message: 'Usuario eliminado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {

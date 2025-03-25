@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
-
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 type Params = {
   id: string;
@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
         rolid: Number(rolid),
       },
     });
-
+    AddLogger('Editar Rol', 'Usuario');
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error al actualizar el usuario:', error);

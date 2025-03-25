@@ -1,17 +1,15 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params; // Asegúrate de usar await params
+    const { id } = await params; 
 
     const compra = await prisma.compra.findUnique({
       where: { id: parseInt(id) },
       include: { 
-        rubro: true,  // Incluir la información del rubro
-        productor: true  // Incluir la información del productor
+        rubro: true, 
+        productor: true 
       }
     });
 

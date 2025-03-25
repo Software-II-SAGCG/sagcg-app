@@ -51,7 +51,6 @@ const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, 
           setTimeout(() => {
             setIsLoading(false); 
             onClose();
-            window.location.reload();
           }, 2000);
         } else {
           // Error en el registro

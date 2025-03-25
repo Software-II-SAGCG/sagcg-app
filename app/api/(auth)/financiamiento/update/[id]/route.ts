@@ -1,9 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-// GET monto total financiado
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -38,6 +35,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         productorId,
       },
     });
+
+    AddLogger('Editar', 'Financiamiento');
 
     return new NextResponse(
       JSON.stringify({ message: "Financiamiento actualizado con éxito", financiamientoActualizado }),
