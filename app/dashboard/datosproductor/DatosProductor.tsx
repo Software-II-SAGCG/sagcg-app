@@ -385,7 +385,7 @@ export default function DatosProductor() {
                 <option value="">Seleccionar Tipo</option>
                 {producerTypes.map((tp) => (
                   <option key={tp.id} value={tp.id}>
-                    {tp.nombre} - precio: {tp.precio.toFixed(2)}%
+                    {tp.nombre} - precio: {tp.precio*100}%
                   </option>
                 ))}
               </select>
