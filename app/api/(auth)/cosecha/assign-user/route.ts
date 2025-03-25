@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +19,8 @@ export async function POST(req: Request) {
         usuarioId,
       },
     });
+
+    AddLogger('Asignar Usuario', 'Cosecha');
 
     return NextResponse.json(relacion, { status: 201 });
   } catch (error) {

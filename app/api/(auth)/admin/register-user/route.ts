@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
-
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         rolid: Number(rolid),
       },
     });
-
+    AddLogger('Agregar', 'Usuario');
     return new NextResponse(JSON.stringify({ message: "Usuario registrado con éxito", usuario }), {
       status: 201,
       headers: { "Content-Type": "application/json" },

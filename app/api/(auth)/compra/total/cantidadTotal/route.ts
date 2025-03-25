@@ -1,8 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-//  Cantidad  Total de Kg Recolectados:  Suma de la cantidad total de todas las compras
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {

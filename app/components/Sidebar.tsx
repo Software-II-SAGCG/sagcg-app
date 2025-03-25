@@ -29,9 +29,9 @@ const Sidebar = ({ rolid }: SidebarProps) => {
   const menuItems = [
     { name: "Home", href: "/dashboard", icon: <Home size={20} />, roles: [1,2,3] },
     { name: "Perfil", href: "/dashboard/profile", icon: <User size={20} />, roles: [1,2,3] },
+    { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} />, roles: [1] },
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1] },
-    { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} />, roles: [1] },
     /*{ name: "Logger de Eventos", href: "/dashboard/logger-eventos", icon: <BookOpen size={20} /> },*/
   ];
   

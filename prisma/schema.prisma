@@ -25,7 +25,6 @@ model Usuario {
   rolid         Int
   rol           Rol      @relation(fields: [rolid], references: [id])
   cosechas      CosechaUsuario[]
-  logger        Logger[]
 }
 
 model Rol {
@@ -137,8 +136,7 @@ model Financiamiento {
 
 model Logger {
     id      Int     @id @default(autoincrement())
+    evento String
     modulo String
     fecha   DateTime
-    usuarioId Int
-    usuario Usuario @relation(fields: [usuarioId], references: [id])
 }

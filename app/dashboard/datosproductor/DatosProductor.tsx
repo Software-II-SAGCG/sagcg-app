@@ -26,6 +26,7 @@ interface Nationality {
 interface ProducerType {
   id: number;
   nombre: string;
+  precio: number;
 }
 
 export default function DatosProductor() {
@@ -384,7 +385,7 @@ export default function DatosProductor() {
                 <option value="">Seleccionar Tipo</option>
                 {producerTypes.map((tp) => (
                   <option key={tp.id} value={tp.id}>
-                    {tp.nombre}
+                    {tp.nombre} - precio: {tp.precio.toFixed(2)}%
                   </option>
                 ))}
               </select>

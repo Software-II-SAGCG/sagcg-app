@@ -1,4 +1,5 @@
 "use client";
+import { parse } from "path";
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
@@ -35,6 +36,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
     nombre: string;
     apellido: string;
     tipoProductor: string;
+    precioProductor: number;
   }
 
   const [compras, setCompras] = useState<Compra[]>([]);
@@ -46,7 +48,6 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
   const [precio, setPrecio] = useState("");
   const [cantidad, setCantidad] = useState("");
   const [humedad, setHumedad] = useState("");
-  const [merma, setMerma] = useState("");
   const [observaciones, setObservaciones] = useState("");
   const [rubroId, setRubroId] = useState<number | null>(null);
   const [productorId, setProductorId] = useState<number | null>(null);
@@ -80,17 +81,22 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
     }
   }
 
-
-
   // Cálculos automáticos
+  const merma = humedad && parseFloat(humedad) > 8
+    ? parseFloat(humedad) - 8
+    : 0;
   const mermaKg = cantidad && merma
-    ? parseFloat(cantidad) * (parseFloat(merma) / 100)
+    ? parseFloat(cantidad) * (merma / 100)
     : 0;
   const cantidadTotal = cantidad
     ? parseFloat(cantidad) - mermaKg
     : 0;
-  const montoTotal = precio
-    ? cantidadTotal * parseFloat(precio)
+  const productor = productores.find((p)=> p.id === productorId)
+  const productorPrecio = precio && productor?.precioProductor
+    ? parseFloat(precio) + (Math.ceil((parseFloat(precio) * productor.precioProductor)*100)/100)
+    : parseFloat(precio);
+  const montoTotal = productorPrecio
+    ? cantidadTotal * productorPrecio
     : 0;
 
   // 1. Obtener compras
@@ -129,7 +135,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
         precio: parseFloat(precio),
         cantidad: parseFloat(cantidad),
         humedad: parseFloat(humedad),
-        merma: parseFloat(merma),
+        merma,
         mermaKg,
         cantidadTotal,
         montoTotal,
@@ -155,7 +161,6 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
       setPrecio("");
       setCantidad("");
       setHumedad("");
-      setMerma("");
       setObservaciones("");
       setRubroId(null);
       setProductorId(null);
@@ -230,7 +235,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
               <option value="" disabled> Selecciona un productor</option>
               {productores.map((productor) => (
                 <option key={productor.id} value={productor.id}>
-                  {productor.nombre} {productor.apellido} - {productor.tipoProductor}
+                  {productor.nombre} {productor.apellido} - {productor.tipoProductor} - {productor.precioProductor*100}%
                 </option>
               ))}
             </select>
@@ -267,6 +272,15 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
             />
           </div>
           <div>
+            <label className="block font-semibold">Precio x Productor ($):</label>
+            <input
+              type="number"
+              value={productorPrecio.toFixed(2)}
+              readOnly
+              className="border p-2 rounded-md w-full bg-gray-100"
+            />
+          </div>
+          <div>
             <label className="block font-semibold">Cantidad (Kg):</label>
             <input
               type="number"
@@ -292,10 +306,9 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
             <label className="block font-semibold">Merma (%):</label>
             <input
               type="number"
-              value={merma}
-              onChange={(e) => setMerma(e.target.value)}
-              className="border p-2 rounded-md w-full"
-              step="0.01"
+              value={merma.toFixed(2)}
+              readOnly
+              className="border p-2 rounded-md w-full bg-gray-100"
             />
           </div>
           <div>

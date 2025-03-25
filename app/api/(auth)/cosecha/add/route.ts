@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +29,8 @@ export async function POST(req: NextRequest) {
     };
 
     const cosecha = await prisma.cosecha.create({ data });
+
+    AddLogger('Agregar', 'Cosecha');
 
     return new NextResponse(JSON.stringify({ message: "Cosecha creada con éxito", cosecha }), {
       status: 201,

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
-
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 import bcrypt from 'bcryptjs';
-
-
 
 export async function PUT(req: NextRequest) {
   const {username, password} = await req.json();
@@ -24,6 +22,8 @@ export async function PUT(req: NextRequest) {
         password: hashedPassword,
       },
     });
+
+    AddLogger('Editar Contraseña', 'Usuario');
 
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {

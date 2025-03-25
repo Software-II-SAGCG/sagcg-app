@@ -3,7 +3,17 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const cosechas = await prisma.cosecha.findMany();
+    const cosechas = await prisma.cosecha.findMany({
+        where: {
+            fechaCierre:{
+                gt: new Date()
+            }
+        },
+        select: {
+            id: true,
+            nombre: true
+        }
+    });
 
     return NextResponse.json(cosechas);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

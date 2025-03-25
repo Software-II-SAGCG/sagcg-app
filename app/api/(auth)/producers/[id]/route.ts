@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 type Params = {
   id: string;
@@ -57,6 +58,8 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
       },
     });
 
+    AddLogger('Editar', 'Productor');
+
     return NextResponse.json({ message: 'Productor actualizado con éxito', producer }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error al actualizar el productor:', error);
@@ -83,6 +86,8 @@ export async function DELETE(req: NextRequest, { params }: {params:Params}) {
     const producer = await prisma.productor.delete({
       where: { id: Number(id) },
     });
+
+    AddLogger('Eliminar', 'Productor');
 
     return NextResponse.json({ message: 'Productor eliminado con éxito', producer }, { status: 200 });
   } catch (error: unknown) {

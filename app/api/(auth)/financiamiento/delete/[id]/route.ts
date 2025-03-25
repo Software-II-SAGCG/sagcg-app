@@ -1,15 +1,16 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params; // Asegúrate de usar await params
+    const { id } = await params;
 
     await prisma.financiamiento.delete({
       where: { id: parseInt(id) },
     });
+
+    AddLogger('Eliminar', 'Financiamiento');
 
     return new NextResponse(JSON.stringify({ message: "Financiamiento eliminado con éxito" }), {
       status: 200,

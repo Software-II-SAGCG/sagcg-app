@@ -6,9 +6,7 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const loggers = await prisma.logger.findMany({
-      include: { usuario: true }, // Incluye la información del usuario relacionado
-    });
+    const loggers = await prisma.logger.findMany();
 
     return NextResponse.json(loggers, { status: 200 });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

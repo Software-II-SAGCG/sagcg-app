@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+import { prisma } from '@/lib/prisma';
 
 type Params = {
   id: string;

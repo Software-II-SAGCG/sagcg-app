@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Importamos la instancia única de Prisma
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,6 +33,8 @@ export async function POST(req: NextRequest) {
     }
     
     const productor = await prisma.productor.create({data});
+
+    AddLogger('Agregar', 'Productor');
 
     return new NextResponse(JSON.stringify({ message: "Productor agregado con éxito", productor }), {
       status: 201,

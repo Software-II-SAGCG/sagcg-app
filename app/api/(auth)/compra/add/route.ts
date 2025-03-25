@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,6 +50,8 @@ export async function POST(req: NextRequest) {
     };
 
     const compra = await prisma.compra.create({ data });
+
+    AddLogger('Agregar', 'Compra');
 
     return new NextResponse(JSON.stringify({ message: "Compra creada con éxito", compra }), {
       status: 201,

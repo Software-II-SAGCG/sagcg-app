@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,6 +32,8 @@ export async function POST(req: NextRequest) {
     };
 
     const financiamiento = await prisma.financiamiento.create({ data });
+
+    AddLogger('Agregar', 'Financiamiento');
 
     return new NextResponse(JSON.stringify({ message: "Financiamiento creado con éxito", financiamiento }), {
       status: 201,

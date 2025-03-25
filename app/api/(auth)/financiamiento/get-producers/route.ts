@@ -10,10 +10,12 @@ export async function GET() {
       const tipo = typesProductor.find((tipo) => tipo.id === productor.tipoid);
       return {
         id: productor.id,
+        cedula: productor.cedula,
         nombre: productor.nombre,
         apellido: productor.apellido,
+        tlfnoLocal: productor.telefonoLocal,
+        direccion: productor.direccion1,
         tipoProductor: tipo ? tipo.nombre : "Desconocido",
-        precioProductor: tipo ? tipo.precio : 0.00
       };
     });
 
@@ -26,4 +28,3 @@ export async function GET() {
     });
   }
 }
-

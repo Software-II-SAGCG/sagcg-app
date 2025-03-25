@@ -1,11 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { AddLogger } from '@/app/services/addLogger';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params; // Asegúrate de usar await params
+    const { id } = await params;
     const body = await req.text();
     if (!body) {
       return new NextResponse(JSON.stringify({ error: "El cuerpo de la solicitud está vacío" }), {
@@ -44,6 +43,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         productorId,
       },
     });
+
+    AddLogger('Editar', 'Compra');
 
     return new NextResponse(
       JSON.stringify({ message: "Compra actualizada con éxito", compraActualizada }),
