@@ -33,6 +33,7 @@ const Sidebar = ({ rolid }: SidebarProps) => {
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1,3] },
     { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs  size={20} />, roles: [1] },
+
   ];
   
   const handleLogout = () => {
