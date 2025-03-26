@@ -10,7 +10,8 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
 
   try {
     const logger = await prisma.logger.findUnique({
-      where: { id: Number(id) },
+      include: {usuario: true},
+      where: { id: Number(id) }
     });
 
     if (!logger) {
@@ -20,7 +21,18 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
       });
     }
 
-    return NextResponse.json(logger, { status: 200 });
+    const data = {
+      id: logger.id,
+      evento: logger.evento,
+      modulo: logger.modulo,
+      fecha: logger.fecha,
+      userAuthId: logger.usuarioId,
+      userAuthNombre: logger.usuario.nombre,
+      userAuthApellido: logger.usuario.apellido,
+      userAuthUsername: logger.usuario.username
+    }
+
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     console.error('Error al obtener el logger:', error);
     return new NextResponse(JSON.stringify({ message: 'Internal server error' }), {
