@@ -21,10 +21,11 @@ interface Compra {
 
 interface ComprasProps {
   cosechaId: number;         // ID de la cosecha
-  onClose: () => void;       // Función para cerrar la ventana
+  onClose: () => void;      // Función para cerrar la ventana
+  userAuthId: number;       
 }
 
-export default function Compras({ cosechaId, onClose }: ComprasProps) {
+export default function Compras({ cosechaId, onClose, userAuthId }: ComprasProps) {
 
   interface Rubro {
     id: number;
@@ -124,7 +125,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
   }, []);
 
   // 2. Manejo del formulario
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, userAuthId:number) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -143,6 +144,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
         rubroId: rubroId,
         productorId: productorId,
         cosechaId,
+        userAuthId
       };
 
       const res = await fetch("/api/compra/add", {
@@ -173,12 +175,13 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
   };
 
   // 3. Eliminar una compra
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, userAuthId:number) => {
     try {
       setError("");
       setMessage("");
       const res = await fetch(`/api/compra/delete/${id}`, {
         method: "DELETE",
+        body: JSON.stringify( {userAuthId} )
       });
       if (!res.ok) {
         throw new Error("Error al eliminar la compra");
@@ -213,7 +216,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
         {message && <p className="text-green-600 mb-2 text-center">{message}</p>}
 
         {/* Formulario para agregar compra */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4 mb-6">
+        <form onSubmit={(e)=>handleSubmit(e, userAuthId)} className="grid grid-cols-3 gap-4 mb-6">
           <div>
             <label className="block font-semibold">Fecha:</label>
             <input
@@ -398,7 +401,7 @@ export default function Compras({ cosechaId, onClose }: ComprasProps) {
                   <td className="p-2 border">{compra.observaciones}</td>
                   <td className="p-2 border">
                     <button
-                      onClick={() => handleDelete(compra.id)}
+                      onClick={() => handleDelete(compra.id, userAuthId)}
                       className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                     >
                       Eliminar

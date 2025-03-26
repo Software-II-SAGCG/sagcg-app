@@ -1,13 +1,10 @@
-// app/api/loggers/route.ts
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { modulo, evento } = body;
+    const { modulo, evento, userAuthId } = body;
 
     if (!modulo || !evento) {
       return NextResponse.json({ error: "Modulo y evento son obligatorios" }, { status: 400 });
@@ -18,6 +15,7 @@ export async function POST(req: Request) {
         evento,
         modulo,
         fecha: new Date(),
+        usuarioId: userAuthId
       },
     });
 

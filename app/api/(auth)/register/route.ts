@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         rolid: 2,
       },
     });
-    AddLogger('Agregar', 'Usuario');
+    AddLogger('Agregar', 'Usuario', usuario.id);
     return new NextResponse(JSON.stringify({ message: "Usuario registrado con éxito", usuario }), {
       status: 201,
       headers: { "Content-Type": "application/json" },

@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { username, nombre, apellido, email, password, rolid } = JSON.parse(body); 
+    const { username, nombre, apellido, email, password, rolid, userAuthId } = JSON.parse(body); 
 
     if (!username || !nombre || !apellido || !email || !password || !rolid) {
       return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         rolid: Number(rolid),
       },
     });
-    AddLogger('Agregar', 'Usuario');
+    AddLogger('Agregar', 'Usuario', userAuthId);
     return new NextResponse(JSON.stringify({ message: "Usuario registrado con éxito", usuario }), {
       status: 201,
       headers: { "Content-Type": "application/json" },

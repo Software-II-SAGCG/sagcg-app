@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaTimes } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import Table from "@/app/components/Table";
 import Header from "@/app/components/Header";
+import { AuthContext } from "@/app/context/AuthContext";
 
 interface Producer {
   id: number;
@@ -55,6 +56,13 @@ export default function DatosProductor() {
   const [producerToDelete, setProducerToDelete] = useState<Producer | null>(
     null
   );
+
+  const authContext = useContext(AuthContext);
+  
+  if (!authContext?.user) {
+    return <p>Cargando...</p>;
+  }
+  const { id: userAuthId} = authContext.user;
 
   const headers = [
     "ID",
@@ -203,13 +211,14 @@ export default function DatosProductor() {
     setShowDeleteConfirm(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (userAuthId:number) => {
     if (!producerToDelete) return;
     try {
       const res = await fetch(
         `http://localhost:3000/api/producers/${producerToDelete.id}`,
         {
           method: "DELETE",
+          body: JSON.stringify( {userAuthId} )
         }
       );
       if (res.ok) {
@@ -225,7 +234,7 @@ export default function DatosProductor() {
     setShowDeleteConfirm(false);
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent, userAuthId:number) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -238,6 +247,7 @@ export default function DatosProductor() {
       direccion1: formData.direccion1,
       direccion2: formData.direccion2,
       tipoid: parseInt(formData.tipoid),
+      userAuthId
     };
 
     try {
@@ -314,7 +324,7 @@ export default function DatosProductor() {
             <h2 className="text-xl font-bold mb-4">
               {isEditMode ? "Editar Productor" : "Agregar Productor"}
             </h2>
-            <form onSubmit={handleFormSubmit} className="flex flex-col">
+            <form onSubmit={(e)=>handleFormSubmit(e, userAuthId)} className="flex flex-col">
               <input
                 type="text"
                 name="nombre"
@@ -413,7 +423,7 @@ export default function DatosProductor() {
             <p className="mb-4 text-center">¿Desea eliminar este productor?</p>
             <div className="flex justify-center space-x-4">
               <button
-                onClick={confirmDelete}
+                onClick={()=>confirmDelete(userAuthId)}
                 className="bg-red-500 text-white px-4 py-2 rounded"
               >
                 Sí

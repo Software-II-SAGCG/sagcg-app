@@ -21,6 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       estado,
       observaciones,
       productorId,
+      userAuthId
     } = JSON.parse(body);
 
     const financiamientoActualizado = await prisma.financiamiento.update({
@@ -36,7 +37,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       },
     });
 
-    AddLogger('Editar', 'Financiamiento');
+    AddLogger('Editar', 'Financiamiento', userAuthId);
 
     return new NextResponse(
       JSON.stringify({ message: "Financiamiento actualizado con éxito", financiamientoActualizado }),

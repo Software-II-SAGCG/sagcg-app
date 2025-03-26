@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaTimes } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { BiPurchaseTagAlt } from "react-icons/bi";
@@ -11,6 +11,7 @@ import Table from "@/app/components/Table";
 import Header from "@/app/components/Header";
 import Compras from "./compras";
 import ListadoCompras from "./listadoCompra";
+import { AuthContext } from "@/app/context/AuthContext";
 
 interface Harvest {
   id: number;
@@ -39,6 +40,11 @@ export default function HarvestPortfolio() {
   const [message, setMessage] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [harvestToDelete, setHarvestToDelete] = useState<Harvest | null>(null);
+  const authContext = useContext(AuthContext);
+  if (!authContext?.user) {
+    return <p>Cargando...</p>;
+  }
+  const { id: userAuthId} = authContext.user;
 
   const headers = ["ID", "Descripcion", "Inicio", "Cierre", ""];
 
@@ -96,11 +102,12 @@ export default function HarvestPortfolio() {
         <Compras
           cosechaId={selectedHarvestId!}          // El ID de la cosecha que corresponda
           onClose={() => setShowCompras(false)}
+          userAuthId={userAuthId}
         />
       )}
       {harvest.estado ? (
         <button
-          onClick={() => handleChangeStatus(harvest, false)}
+          onClick={() => handleChangeStatus(harvest, false, userAuthId)}
           className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 mx-2 hover:bg-red-500"
           title="Cerrar Cosecha"
         >
@@ -108,7 +115,7 @@ export default function HarvestPortfolio() {
         </button>
       ) : (
         <button
-          onClick={() => handleChangeStatus(harvest, true)}
+          onClick={() => handleChangeStatus(harvest, true, userAuthId)}
           className="bg-green-300 text-black px-4 py-2 rounded-lg shadow-lg border border-green-500 mx-2 hover:bg-green-500"
           title="Habilitar Cosecha"
         >
@@ -184,13 +191,14 @@ export default function HarvestPortfolio() {
     setShowDeleteConfirm(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = async (userAuthId:number) => {
     if (!harvestToDelete) return;
     try {
       const res = await fetch(
         `http://localhost:3000/api/cosecha/delete/${harvestToDelete.id}`,
         {
           method: "DELETE",
+          body: JSON.stringify({userAuthId})
         }
       );
       if (res.ok) {
@@ -206,7 +214,7 @@ export default function HarvestPortfolio() {
     setShowDeleteConfirm(false);
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent, userAuthId:number) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -214,6 +222,7 @@ export default function HarvestPortfolio() {
       nombre: formData.nombre,
       fechaInicio: formData.fechaInicio,
       fechaCierre: formData.fechaCierre,
+      userAuthId
     };
 
     try {
@@ -263,12 +272,12 @@ export default function HarvestPortfolio() {
     setSearchId(e.target.value);
   };
 
-  const handleChangeStatus = async (harvest: Harvest, newStatus: boolean) => {
+  const handleChangeStatus = async (harvest: Harvest, newStatus: boolean, userAuthId:number) => {
     try {
       const res = await fetch(`http://localhost:3000/api/cosecha/change-status/${harvest.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estado: newStatus }),
+        body: JSON.stringify({ estado: newStatus, userAuthId }),
       });
       if (res.ok) {
         setMessage(`Cosecha ${newStatus ? "habilitada" : "cerrada"} exitosamente.`);
@@ -308,7 +317,7 @@ export default function HarvestPortfolio() {
             <h2 className="text-xl font-bold mb-4">
               {isEditMode ? "Editar Cosecha" : "Agregar Cosecha"}
             </h2>
-            <form onSubmit={handleFormSubmit} className="flex flex-col">
+            <form onSubmit={(e)=>handleFormSubmit(e, userAuthId)} className="flex flex-col">
               <label htmlFor="nombre" className="mb-1">Nombre</label>
               <input
                 type="text"
@@ -359,7 +368,7 @@ export default function HarvestPortfolio() {
             <p className="mb-4 text-center">¿Desea eliminar esta cosecha?</p>
             <div className="flex justify-center space-x-4">
               <button
-                onClick={confirmDelete}
+                onClick={()=>confirmDelete(userAuthId)}
                 className="bg-red-500 text-white px-4 py-2 rounded"
               >
                 Sí

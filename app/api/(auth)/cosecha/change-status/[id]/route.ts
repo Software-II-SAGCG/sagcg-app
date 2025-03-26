@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       });
     }
 
-    const { estado } = JSON.parse(body);
+    const { estado, userAuthId } = JSON.parse(body);
 
     if (typeof estado !== "boolean") {
       return new NextResponse(JSON.stringify({ error: "El estado es obligatorio y debe ser un valor booleano." }), {
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       data: { estado },
     });
 
-    AddLogger('Cambiar Estado', 'Cosecha');
+    AddLogger('Cambiar Estado', 'Cosecha', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Estado de la cosecha actualizado con éxito", cosechaActualizada }), {
       status: 200,

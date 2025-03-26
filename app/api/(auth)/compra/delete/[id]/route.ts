@@ -5,12 +5,13 @@ import { AddLogger } from '@/app/services/addLogger';
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params; // Asegúrate de usar await params
+    const { userAuthId } = await req.json();
 
     await prisma.compra.delete({
       where: { id: parseInt(id) },
     });
 
-    AddLogger('Eliminar', 'Compra');
+    AddLogger('Eliminar', 'Compra', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Compra eliminada con éxito" }), {
       status: 200,

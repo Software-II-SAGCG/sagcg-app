@@ -8,9 +8,10 @@ import { ToastContainer, toast } from "react-toastify";
 interface ModalRegisterProps {
   isOpen: boolean;
   onClose: () => void;
+  userAuthId: number;
 }
 
-const RegisterModal: React.FC<ModalRegisterProps> = ({ isOpen, onClose }) => {
+const RegisterModal: React.FC<ModalRegisterProps> = ({ isOpen, onClose, userAuthId }) => {
   
   interface Rol {
     id: number;
@@ -54,7 +55,7 @@ const RegisterModal: React.FC<ModalRegisterProps> = ({ isOpen, onClose }) => {
       const response = await fetch("/api/admin/register-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, nombre, apellido, email, password, rolid }),
+        body: JSON.stringify({ username, nombre, apellido, email, password, rolid, userAuthId }),
       });
 
       if (response.ok) {

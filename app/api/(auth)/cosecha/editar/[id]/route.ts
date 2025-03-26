@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       });
     }
 
-    const { nombre, estado, fechaInicio, fechaCierre } = JSON.parse(body);
+    const { nombre, estado, fechaInicio, fechaCierre, userAuthId } = JSON.parse(body);
 
     const cosechaActualizada = await prisma.cosecha.update({
       where: { id: parseInt(id) },
@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       },
     });
 
-    AddLogger('Editar', 'Cosecha');
+    AddLogger('Editar', 'Cosecha', userAuthId);
     
     return new NextResponse(JSON.stringify({ message: "Cosecha actualizada con éxito", cosechaActualizada }), {
       status: 200,

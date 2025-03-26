@@ -22,10 +22,11 @@ interface ModalEditRolProps {
   isOpen: boolean;
   onClose: () => void;
   dataUser: User | null;
+  userAuthId: number;
   rols: Rol[];
 }
 
-const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, rols }) => {
+const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, rols, userAuthId }) => {
 
   const [rolid, setRolId] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -39,7 +40,7 @@ const EditRolModal: React.FC<ModalEditRolProps> = ({ isOpen, onClose, dataUser, 
         const response = await fetch(`http://localhost:3000/api/admin/edit-rol/${dataUser?.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify( {rolid} ),
+          body: JSON.stringify( {rolid, userAuthId}  ),
         });
   
         if (response.ok) {
