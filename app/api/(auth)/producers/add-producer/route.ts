@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const {nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid } = JSON.parse(body);
+    const {nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid, userAuthId } = JSON.parse(body);
 
     if (!nombre || !apellido || !cedula || !nacionalidadId || !telefonoLocal || !direccion1 || !direccion2 || !tipoid) {
       return new NextResponse(JSON.stringify({ error: "Todos los campos son obligatorios" }), {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     
     const productor = await prisma.productor.create({data});
 
-    AddLogger('Agregar', 'Productor');
+    AddLogger('Agregar', 'Productor', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Productor agregado con éxito", productor }), {
       status: 201,

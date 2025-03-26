@@ -5,12 +5,13 @@ import { AddLogger } from '@/app/services/addLogger';
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
+    const {userAuthId} = await req.json();
 
     await prisma.cosecha.delete({
       where: { id: parseInt(id) },
     });
 
-    AddLogger('Eliminar', 'Cosecha');
+    AddLogger('Eliminar', 'Cosecha', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Cosecha eliminada con éxito" }), {
       status: 200,

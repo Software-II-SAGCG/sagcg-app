@@ -1,7 +1,7 @@
 "use client";
 import Modal from "@/app/components/Modal";
 import Loader from "@/app/components/Loader";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaSearch, FaPlus, FaTimes } from "react-icons/fa";
 import RegisterModal from "@/app/components/RegisterModal";
 import EditRolModal from "@/app/components/EditRolModal";
@@ -12,6 +12,7 @@ import Header from "@/app/components/Header";
 import { GiCorn } from "react-icons/gi";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
+import { AuthContext } from "@/app/context/AuthContext";
 
 interface Cosecha {
   id: number;
@@ -47,6 +48,12 @@ export default function UserProfiles() {
   const [muestraCosechas, setMuestraCosechas] = useState<Cosecha[]>([]);
   const [cosechaId, setCosechaId] = useState<number | null>(null);
   const [showError, setShowError] = useState(false);
+  const authContext = useContext(AuthContext);
+  
+  if (!authContext?.user) {
+    return <p>Cargando...</p>;
+  }
+  const { id: userAuthId} = authContext.user;
 
   const headers = ["Id", "Username", "Nombre", "Apellido", "Rol", ""];
   const rows = users.map((user) => [
@@ -169,12 +176,12 @@ export default function UserProfiles() {
     setIsRegisterModalOpen(true);
   };
 
-  const handleAssignHarvest = async (cosechaId: number, usuarioId: number) => {
+  const handleAssignHarvest = async (cosechaId: number, usuarioId: number, userAuthId:number) => {
     try {
       const response = await fetch("/api/cosecha/assign-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cosechaId, usuarioId }),
+        body: JSON.stringify({ cosechaId, usuarioId, userAuthId }),
       });
       if(response.ok){
         setCosechaId(null);
@@ -265,7 +272,7 @@ export default function UserProfiles() {
                 <button
                   onClick={()=>{
                     if (cosechaId != null){
-                      handleAssignHarvest(cosechaId, userId)
+                      handleAssignHarvest(cosechaId, userId, userAuthId)
                       setShowError(false)
                     }else{
                       setShowError(true);
@@ -289,18 +296,21 @@ export default function UserProfiles() {
         )}
       </Modal>
 
-      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => {setIsRegisterModalOpen(false), getUsers()}} />
+      <RegisterModal isOpen={isRegisterModalOpen} onClose={() => {setIsRegisterModalOpen(false), getUsers()}} userAuthId = {userAuthId} />
 
       <EditRolModal 
         isOpen={isEditRolModalOpen} 
         onClose={()=> {setIsEditRolOpen(false), getUsers()}} 
         dataUser = {dataUser}
+        userAuthId = {userAuthId}
         rols={rols}/>
 
       <DeleteUserModal
         isOpen={isDeleteUserModalOpen}
         onClose={()=> setIsDeleteUserModalOpen(false)}
-        dataUser={dataUser}/>
+        dataUser={dataUser}
+        userAuthId = {userAuthId}
+        /> 
     </div>
   );
 }

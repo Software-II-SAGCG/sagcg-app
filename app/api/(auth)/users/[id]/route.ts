@@ -53,8 +53,8 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
         email
       },
     });
-
-    AddLogger('Editar', 'Usuario');
+    const userAuthId = Number(id); 
+    AddLogger('Editar', 'Usuario', userAuthId);
 
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {
@@ -83,13 +83,14 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
 
 export async function DELETE(req: NextRequest, { params }: {params:Params}) {
   const { id } = params;
+  const { userAuthId } = await req.json();
 
   try {
     const usuario = await prisma.usuario.delete({
       where: { id: Number(id) },
     });
 
-    AddLogger('Eliminar', 'Usuario');
+    AddLogger('Eliminar', 'Usuario', userAuthId);
 
     return NextResponse.json({ message: 'Usuario eliminado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {

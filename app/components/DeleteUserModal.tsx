@@ -17,9 +17,10 @@ interface ModalDeleteUserProps {
   isOpen: boolean;
   onClose: () => void;
   dataUser: User | null;
+  userAuthId: number;
 }
 
-const DeleteUserModal: React.FC<ModalDeleteUserProps> = ({isOpen, onClose, dataUser}) => {
+const DeleteUserModal: React.FC<ModalDeleteUserProps> = ({isOpen, onClose, dataUser, userAuthId}) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,6 +29,7 @@ const DeleteUserModal: React.FC<ModalDeleteUserProps> = ({isOpen, onClose, dataU
       const response = await fetch(`http://localhost:3000/api/users/${dataUser?.id}`,
         {
           method: "DELETE",
+          body: JSON.stringify({userAuthId})
         }
       );
       if (response.ok){

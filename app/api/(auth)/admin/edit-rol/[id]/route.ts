@@ -9,7 +9,7 @@ type Params = {
 
 export async function PUT(req: NextRequest, { params }: {params:Params}) {
   const { id } = params;
-  const {rolid} = await req.json();
+  const {rolid, userAuthId} = await req.json();
 
   if (!rolid) {
     return new NextResponse(JSON.stringify({ error: 'Todos los campos son obligatorios' }), {
@@ -25,7 +25,8 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
         rolid: Number(rolid),
       },
     });
-    AddLogger('Editar Rol', 'Usuario');
+
+    AddLogger('Editar Rol', 'Usuario', userAuthId);
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error al actualizar el usuario:', error);

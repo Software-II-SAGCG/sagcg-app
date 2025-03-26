@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    AddLogger('Editar Contraseña', 'Usuario');
+    AddLogger('Editar Contraseña', 'Usuario', usuario.id);
 
     return NextResponse.json({ message: 'Usuario actualizado con éxito', usuario }, { status: 200 });
   } catch (error: unknown) {

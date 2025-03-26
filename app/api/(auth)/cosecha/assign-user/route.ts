@@ -4,7 +4,7 @@ import { AddLogger } from '@/app/services/addLogger';
 
 export async function POST(req: Request) {
   try {
-    const { cosechaId, usuarioId } = await req.json();
+    const { cosechaId, usuarioId, userAuthId } = await req.json();
 
     if (!cosechaId || !usuarioId) {
       return new NextResponse(JSON.stringify({ message: 'cosechaId y usuarioId son obligatorios.' }), {
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       },
     });
 
-    AddLogger('Asignar Usuario', 'Cosecha');
+    AddLogger('Asignar Usuario', 'Cosecha', userAuthId);
 
     return NextResponse.json(relacion, { status: 201 });
   } catch (error) {

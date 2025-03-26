@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { nombre, estado, fechaInicio, fechaCierre } = JSON.parse(body);
+    const { nombre, estado, fechaInicio, fechaCierre, userAuthId } = JSON.parse(body);
 
     if (!nombre) {
       return new NextResponse(JSON.stringify({ error: "El nombre es obligatorio" }), {
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const cosecha = await prisma.cosecha.create({ data });
 
-    AddLogger('Agregar', 'Cosecha');
+    AddLogger('Agregar', 'Cosecha', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Cosecha creada con éxito", cosecha }), {
       status: 201,

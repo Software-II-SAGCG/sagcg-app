@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const { fechaInicio, fechaVencimiento, noLetra, monto, estado, observaciones, productorId } = JSON.parse(body);
+    const { fechaInicio, fechaVencimiento, noLetra, monto, estado, observaciones, productorId, userAuthId } = JSON.parse(body);
 
     if (!fechaInicio || !fechaVencimiento || !noLetra || !productorId) {
       return new NextResponse(JSON.stringify({ error: "fechaInicio, fechaVencimiento, noLetra y productorId son obligatorios" }), {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const financiamiento = await prisma.financiamiento.create({ data });
 
-    AddLogger('Agregar', 'Financiamiento');
+    AddLogger('Agregar', 'Financiamiento', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Financiamiento creado con éxito", financiamiento }), {
       status: 201,

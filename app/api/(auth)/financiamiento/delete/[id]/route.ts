@@ -5,12 +5,13 @@ import { AddLogger } from '@/app/services/addLogger';
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = await params;
+    const { userAuthId } = await req.json();
 
     await prisma.financiamiento.delete({
       where: { id: parseInt(id) },
     });
 
-    AddLogger('Eliminar', 'Financiamiento');
+    AddLogger('Eliminar', 'Financiamiento', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Financiamiento eliminado con éxito" }), {
       status: 200,

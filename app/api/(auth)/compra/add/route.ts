@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       rubroId,
       productorId,
       cosechaId,
+      userAuthId
     } = JSON.parse(body);
 
     if (!fecha || !rubroId || !productorId) {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     const compra = await prisma.compra.create({ data });
 
-    AddLogger('Agregar', 'Compra');
+    AddLogger('Agregar', 'Compra', userAuthId);
 
     return new NextResponse(JSON.stringify({ message: "Compra creada con éxito", compra }), {
       status: 201,

@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
           headers: { 'Content-Type': 'application/json' },
         });
       }
-      AddLogger('Loggear', 'Usuario');
+      AddLogger('Loggear', 'Usuario', usuario.id);
       return new NextResponse(JSON.stringify({ 
         data: usuario,
         message: 'Inicio de sesión exitoso' }), {

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
 
 export async function PUT(req: NextRequest, { params }: {params:Params}) {
   const { id } = params;
-  const { nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid} = await req.json();
+  const { nombre, apellido, cedula, nacionalidadId, telefonoLocal, direccion1, direccion2, tipoid, userAuthId} = await req.json();
 
   if (!nombre || !apellido || !cedula || !nacionalidadId || !telefonoLocal || !direccion1 || !direccion2 || !tipoid) {
     return new NextResponse(JSON.stringify({ error: 'Todos los campos son obligatorios' }), {
@@ -58,7 +58,7 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
       },
     });
 
-    AddLogger('Editar', 'Productor');
+    AddLogger('Editar', 'Productor', userAuthId);
 
     return NextResponse.json({ message: 'Productor actualizado con éxito', producer }, { status: 200 });
   } catch (error: unknown) {
@@ -81,13 +81,14 @@ export async function PUT(req: NextRequest, { params }: {params:Params}) {
 
 export async function DELETE(req: NextRequest, { params }: {params:Params}) {
   const { id } = params;
+  const { userAuthId } = await req.json();
 
   try {
     const producer = await prisma.productor.delete({
       where: { id: Number(id) },
     });
 
-    AddLogger('Eliminar', 'Productor');
+    AddLogger('Eliminar', 'Productor', userAuthId);
 
     return NextResponse.json({ message: 'Productor eliminado con éxito', producer }, { status: 200 });
   } catch (error: unknown) {
