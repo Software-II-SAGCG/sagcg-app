@@ -14,6 +14,7 @@ interface Logger {
   userAuthNombre: string;
   userAuthApellido: string;
   userAuthUsername: string;
+  userAuthRol: string;
 }
 
 export default function EventLogger() {
@@ -182,6 +183,9 @@ export default function EventLogger() {
             <p>
               <strong>Nombre y Apellido:</strong>{" "}
               {`${selectedUser.userAuthNombre} ${selectedUser.userAuthApellido}`}
+            </p>
+            <p>
+              <strong>Rol:</strong> {selectedUser.userAuthRol}
             </p>
             <div className="flex justify-center mt-4">
               <button

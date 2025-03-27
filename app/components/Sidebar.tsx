@@ -45,7 +45,7 @@ const Sidebar = ({ rolid }: SidebarProps) => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-gray-800 text-white p-4 flex flex-col overflow-y-auto">
+    <aside className="fixed top-0 left-0 w-64 h-screen bg-gray-800 text-white p-4 flex flex-col overflow-y-auto z-50">
       <h2 className="text-lg text-center font-bold mb-6">Menú</h2>
       <nav className="space-y-2 flex-grow">
         {menuItems

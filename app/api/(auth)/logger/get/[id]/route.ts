@@ -21,6 +21,13 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
       });
     }
 
+    const roles = await prisma.rol.findMany({
+      select:{
+        id: true,
+        nombre: true
+      }
+    });
+    const rolUser = roles.find(rol => rol.id === logger.usuario.rolid)
     const data = {
       id: logger.id,
       evento: logger.evento,
@@ -29,7 +36,8 @@ export async function GET(req: NextRequest, { params }: {params:Params}) {
       userAuthId: logger.usuarioId,
       userAuthNombre: logger.usuario.nombre,
       userAuthApellido: logger.usuario.apellido,
-      userAuthUsername: logger.usuario.username
+      userAuthUsername: logger.usuario.username,
+      userAuthRol: rolUser ? rolUser.nombre : "Desconocido"
     }
 
     return NextResponse.json(data, { status: 200 });

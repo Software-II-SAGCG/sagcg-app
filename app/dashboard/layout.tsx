@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <QueryClientProvider client={queryClient}>
       <div className="flex">
         <Sidebar rolid={authContext.user.rolid} />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 ml-64">{children}</main>
       </div>
     </QueryClientProvider>
   )
