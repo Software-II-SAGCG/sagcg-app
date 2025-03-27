@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, FileText, BookOpen, LogOut, MoreVertical, User, Logs } from "lucide-react";
+import { Home, Users, FileText, BookOpen, LogOut, MoreVertical, User, Logs, ChartBar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -33,6 +33,7 @@ const Sidebar = ({ rolid }: SidebarProps) => {
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1,3] },
     { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs  size={20} />, roles: [1] },
+    { name: "Estadisticas", href: "/dashboard/statistics", icon: <ChartBar size={20} style={{ transform: "rotate(-90deg)" }} />, roles: [1]}
 
   ];
   
