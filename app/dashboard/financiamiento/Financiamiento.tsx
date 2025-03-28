@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState, useContext} from 'react';
 import { FaEdit, FaTrashAlt, FaPlus, FaList } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
+import CrearFinanciamiento from './crear';
 
 interface Financiamiento {
   id: number;
@@ -24,10 +26,12 @@ const Financiamiento = () => {
   const [filteredFinanciamientos, setFilteredFinanciamientos] = useState<Financiamiento[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [producers, setProducers] = useState<any[]>([]);
+  const [showCrear, setShowCrear] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [userAuthId] = useState(1);
   const itemsPerPage = 10;
-  const router = useRouter(); // Para navegación
+  const router = useRouter(); // Cambiar por el contexto real del usuario autenticado
 
   useEffect(() => {
     const fetchFinanciamientos = async () => {
@@ -132,13 +136,20 @@ const Financiamiento = () => {
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="bg-blue-500 text-3xl font-bold text-center text-white mb-6">Datos del Financiamiento</h1>
       <div className="flex justify-end space-x-4 mb-4 ">
-          <button 
-            onClick={() => router.push('./crear')}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
+          <button
+            onClick={() => setShowCrear(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
-            <FaPlus className="mr-2" /> Crear
+            Agregar Financiamiento
           </button>
-          <button 
+
+          {showCrear && (
+            <CrearFinanciamiento
+              onClose={() => setShowCrear(false)}
+              userAuthId={userAuthId}
+            />
+          )}
+          <button
             onClick={() => router.push('/dashboard/financiamiento/listaFinanciamiento')}
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
           >
