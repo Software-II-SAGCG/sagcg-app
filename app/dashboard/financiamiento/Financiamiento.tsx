@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState, useContext} from 'react';
-import { FaEdit, FaTrashAlt, FaPlus, FaList } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt, FaPlus, FaList, FaTimes } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import CrearFinanciamiento from './crear';
+
 
 interface Financiamiento {
   id: number;
@@ -136,11 +137,11 @@ const Financiamiento = () => {
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="bg-blue-500 text-3xl font-bold text-center text-white mb-6">Datos del Financiamiento</h1>
       <div className="flex justify-end space-x-4 mb-4 ">
+          <></>
           <button
             onClick={() => setShowCrear(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Agregar Financiamiento
+            className="bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500"          >
+            <FaPlus size={20} />
           </button>
 
           {showCrear && (
@@ -153,7 +154,7 @@ const Financiamiento = () => {
             onClick={() => router.push('/dashboard/financiamiento/listaFinanciamiento')}
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center"
           >
-            <FaList className="mr-2" /> Lista
+            <FaList className="mr-2" />
           </button>
         </div>
 
