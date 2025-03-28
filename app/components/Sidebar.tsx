@@ -33,7 +33,7 @@ const Sidebar = ({ rolid }: SidebarProps) => {
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1,3] },
     { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs size={20} />, roles: [1] },
-    { name: "Financiamiento", href: "/dashboard/financiamiento/", icon: <DollarSign size={20} />, roles: [1,3] },
+    { name: "Financiamiento", href: "/dashboard/financiamiento", icon: <DollarSign size={20} />, roles: [1,3] },
     { name: "Estadisticas", href: "/dashboard/statistics", icon: <ChartBar size={20} style={{ transform: "rotate(-90deg)" }} />, roles: [1]}
   ];
   
