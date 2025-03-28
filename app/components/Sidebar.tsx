@@ -32,9 +32,9 @@ const Sidebar = ({ rolid }: SidebarProps) => {
     { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} />, roles: [1] },
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1,3] },
-    { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs  size={20} />, roles: [1] },
-
-  ];
+    { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs size={20} />, roles: [1] },
+    { name: "Datos del Financiamiento", href: "/dashboard/financiamiento/", icon: <FileText size={20} />, roles: [1,3] } // Nuevo enlace agregado
+];
   
   const handleLogout = () => {
     // Aquí se puede limpiar tokens o datos de sesión si los tienes
