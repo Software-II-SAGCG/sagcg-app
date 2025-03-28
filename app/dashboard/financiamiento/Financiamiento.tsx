@@ -1,73 +1,57 @@
 "use client";
-import { useEffect, useState, useContext} from 'react';
-import { FaEdit, FaTrashAlt, FaPlus, FaList, FaTimes } from 'react-icons/fa';
+import { useEffect, useState, useContext } from 'react';
+import { FaEdit, FaTrashAlt, FaPlus, FaList } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import CrearFinanciamiento from './crear';
-
+import { AuthContext } from "@/app/context/AuthContext";
 
 interface Financiamiento {
   id: number;
-  fecha: string;
-  cedula: string;
-  apellidos: string;
-  nombres: string;
-  telefonoLocal: string;
-  direccion: string;
-  tipoRecolector: string;
-  numeroLetraCambio: string;
+  fechaInicio: string;
   fechaVencimiento: string;
+  nroLetra: string;
   monto: number;
-  pago: string;
+  estado: boolean;
+  productorCedula: string;
+  productorNombre: string;
+  productorApellido: string;
+  productorTlfLocal: string;
+  productorDireccion: string;
+  productorTipo: string;
 }
 
 const Financiamiento = () => {
   const [financiamientos, setFinanciamientos] = useState<Financiamiento[]>([]);
   const [filteredFinanciamientos, setFilteredFinanciamientos] = useState<Financiamiento[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [producers, setProducers] = useState<any[]>([]);
   const [showCrear, setShowCrear] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [userAuthId] = useState(1);
   const itemsPerPage = 10;
-  const router = useRouter(); // Cambiar por el contexto real del usuario autenticado
+  const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchFinanciamientos = async () => {
-      try {
-        const response = await fetch('/api/financiamiento/get');
-        if (!response.ok) throw new Error('Error al obtener los financiamientos');
+    if (authContext?.user) {
+      const fetchFinanciamientos = async () => {
+        try {
+          const response = await fetch('/api/financiamiento/get');
+          if (!response.ok) throw new Error('Error al obtener los financiamientos');
 
-        const data = await response.json();
-        setFinanciamientos(data);
-        setFilteredFinanciamientos(data);
-      } catch (error) {
-        setError('Hubo un problema al cargar los financiamientos.');
-      }
-    };
+          const data = await response.json();
+          console.log('Financiamientos obtenidos:', data); // Verifica los datos obtenidos
+          setFinanciamientos(data);
+          setFilteredFinanciamientos(data);
+        } catch (error) {
+          setError('Hubo un problema al cargar los financiamientos.');
+        }
+      };
 
-    const fetchProducers = async () => {
-      try {
-        const response = await fetch('/api/financiamiento/get-producers');
-        if (!response.ok) throw new Error('Error al obtener los productores');
-
-        const data = await response.json();
-        setProducers(data);
-      } catch (error) {
-        setError('Hubo un problema al cargar los productores.');
-      }
-    };
-
-    fetchFinanciamientos();
-    fetchProducers();
-  }, []);
-
-  const getProducerData = (producerId: number) => {
-    const producer = producers.find((p) => p.id === producerId);
-    return producer ? producer : {};
-  };
+      fetchFinanciamientos();
+    }
+  }, [authContext?.user]);
 
   const formatFecha = (fecha: string) => {
     try {
@@ -81,22 +65,22 @@ const Financiamiento = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-  
-    const filtered = financiamientos.filter(financiamiento => 
-      (financiamiento.cedula?.toLowerCase().includes(term) || '') ||   // Validación de `cedula`
-      (financiamiento.nombres?.toLowerCase().includes(term) || '')     // Validación de `nombres`
+
+    const filtered = financiamientos.filter(financiamiento =>
+      (financiamiento.productorCedula?.toLowerCase().includes(term) || '') ||
+      (financiamiento.productorNombre?.toLowerCase().includes(term) || '')
     );
-  
+
     setFilteredFinanciamientos(filtered);
     setCurrentPage(1);
   };
-  
+
   const deleteFinanciamiento = async (id: number) => {
     try {
       const response = await fetch(`/api/financiamiento/delete/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userAuthId: 1 }) // Cambiar por el ID real del usuario autenticado
+        body: JSON.stringify({ userAuthId: authContext?.user?.id || '' })
       });
 
       if (!response.ok) throw new Error('Error al eliminar el financiamiento');
@@ -113,7 +97,7 @@ const Financiamiento = () => {
       const response = await fetch(`/api/financiamiento/update/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...updatedData, userAuthId: 1 }) // Cambiar por el ID real del usuario autenticado
+        body: JSON.stringify({ ...updatedData, userAuthId: authContext?.user?.id || '' })
       });
 
       if (!response.ok) throw new Error('Error al actualizar el financiamiento');
@@ -133,11 +117,14 @@ const Financiamiento = () => {
 
   const totalPages = Math.ceil(filteredFinanciamientos.length / itemsPerPage);
 
+  if (!authContext?.user) {
+    return <p>Cargando...</p>;
+  }
+
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="bg-blue-500 text-3xl font-bold text-center text-white mb-6">Datos del Financiamiento</h1>
       <div className="flex justify-end space-x-4 mb-4 ">
-          <></>
           <button
             onClick={() => setShowCrear(true)}
             className="bg-blue-300 text-black px-4 py-2 rounded-lg shadow-lg border border-blue-500 mx-2 hover:bg-blue-500"          >
@@ -147,7 +134,7 @@ const Financiamiento = () => {
           {showCrear && (
             <CrearFinanciamiento
               onClose={() => setShowCrear(false)}
-              userAuthId={userAuthId}
+              userAuthId={authContext?.user?.id }
             />
           )}
           <button
@@ -175,42 +162,38 @@ const Financiamiento = () => {
           <table className="min-w-full bg-white border border-grey-200">
             <thead className="bg-gray-300 text-black">
               <tr>
-                {['ID', 'Fecha', 'Cédula', 'Apellidos', 'Nombres', 'Teléfono Local', 'Dirección', 'Tipo de Recolector', 'N° Letra Cambio', 'F. De Vencimiento', 'Monto ($)', 'Pagó', 'Acciones'].map((header) => (
+                {['ID', 'Fecha Inicio', 'Cédula', 'Apellidos', 'Nombres', 'Teléfono Local', 'Dirección', 'Tipo de Recolector', 'N° Letra Cambio', 'F. De Vencimiento', 'Monto ($)', 'Pagó', 'Acciones'].map((header) => (
                   <th key={header} className="py-3 px-5 border-b text-left font-semibold">{header}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {paginatedFinanciamientos.map((financiamiento) => {
-                const producer = getProducerData(financiamiento.id);
-
-                return (
-                  <tr key={financiamiento.id}>
-                    <td className="py-2 px-4 border-b text-black">{financiamiento.id}</td>
-                    <td className="py-2 px-4 border-b text-black">{formatFecha(financiamiento.fecha)}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.cedula || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.apellido || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.nombre || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.tlfnoLocal || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.direccion || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{producer.tipoProductor || 'N/A'}</td>
-                    <td className="py-2 px-4 border-b text-black">{financiamiento.numeroLetraCambio || '000001'}</td>
-                    <td className="py-2 px-4 border-b text-black">{formatFecha(financiamiento.fechaVencimiento)}</td>
-                    <td className="py-2 px-4 border-b text-black">${financiamiento.monto}</td>
-                    <td className="py-2 px-4 border-b text-black">{financiamiento.pago}</td>
-                    <td className="py-2 px-4 border-b space-x-2">
-                      <button className="p-2 text-yellow-500 hover:text-yellow-700" title="Editar"
-                        onClick={() => updateFinanciamiento(financiamiento.id, { monto: 1500 })}>
-                        <FaEdit />
-                      </button>
-                      <button className="p-2 text-red-500 hover:text-red-700" title="Eliminar"
-                      onClick={() => deleteFinanciamiento(financiamiento.id)}>
-                        <FaTrashAlt />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {paginatedFinanciamientos.map((financiamiento) => (
+                <tr key={financiamiento.id}>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.id}</td>
+                  <td className="py-2 px-4 border-b text-black">{formatFecha(financiamiento.fechaInicio)}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorCedula || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorApellido || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorNombre || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorTlfLocal || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorDireccion || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.productorTipo || 'N/A'}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.nroLetra || '000001'}</td>
+                  <td className="py-2 px-4 border-b text-black">{formatFecha(financiamiento.fechaVencimiento)}</td>
+                  <td className="py-2 px-4 border-b text-black">${financiamiento.monto}</td>
+                  <td className="py-2 px-4 border-b text-black">{financiamiento.estado ? 'Sí' : 'No'}</td>
+                  <td className="py-2 px-4 border-b space-x-2">
+                    <button className="p-2 text-yellow-500 hover:text-yellow-700" title="Editar"
+                      onClick={() => updateFinanciamiento(financiamiento.id, { monto: 1500 })}>
+                      <FaEdit />
+                    </button>
+                    <button className="p-2 text-red-500 hover:text-red-700" title="Eliminar"
+                    onClick={() => deleteFinanciamiento(financiamiento.id)}>
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
