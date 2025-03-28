@@ -113,7 +113,7 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
           <div>
             <label className="block font-semibold">Fecha Inicio:</label>
             <input
-              type="datetime-local"
+              type="date"
               value={fechaInicio}
               onChange={(e) => setFechaInicio(e.target.value)}
               className="border p-2 rounded-md w-full"
@@ -123,7 +123,7 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
           <div>
             <label className="block font-semibold">Fecha Vencimiento:</label>
             <input
-              type="datetime-local"
+              type="date"
               value={fechaVencimiento}
               onChange={(e) => setFechaVencimiento(e.target.value)}
               className="border p-2 rounded-md w-full"

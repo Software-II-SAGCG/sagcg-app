@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
         nroLetra: financiamiento.noLetra,
         monto: financiamiento.monto,
         estado: financiamiento.estado,
+        productorId: financiamiento.productor.id,
         productorCedula: financiamiento.productor.cedula,
         productorNombre: financiamiento.productor.nombre,
         productorApellido: financiamiento.productor.apellido,

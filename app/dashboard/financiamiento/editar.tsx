@@ -19,6 +19,7 @@ interface Financiamiento {
     nroLetra: string;
     monto: number;
     estado: boolean;
+    productorId: number;
     productorCedula: string;
     productorNombre: string;
     productorApellido: string;
@@ -35,8 +36,10 @@ interface FinanciamientoProps {
 
 export default function EditarFinanciamiento({ onClose, userAuthId, financiamientoData }: FinanciamientoProps) {
 
-  const [fechaInicio, setFechaInicio] = useState(financiamientoData?.fechaInicio || "");
-  const [fechaVencimiento, setFechaVencimiento] = useState(financiamientoData?.fechaVencimiento || "");
+  const [fechaInicio, setFechaInicio] = useState(
+  financiamientoData?.fechaInicio ? financiamientoData.fechaInicio.split("T")[0] : "");
+  const [fechaVencimiento, setFechaVencimiento] = useState(
+    financiamientoData?.fechaVencimiento ? financiamientoData.fechaVencimiento.split("T")[0] : "");
   const [noLetra, setNoLetra] = useState(financiamientoData?.nroLetra || "");
   const [monto, setMonto] = useState(financiamientoData?.monto.toString() || "");
   const [estado, setEstado] = useState(financiamientoData?.estado || false);
@@ -110,12 +113,11 @@ export default function EditarFinanciamiento({ onClose, userAuthId, financiamien
 
         {error && <p className="text-red-600 mb-2 text-center">{error}</p>}
         {message && <p className="text-green-600 mb-2 text-center">{message}</p>}
-
         <form onSubmit={(e)=>handleSubmit(e, financiamientoData?.id || 0, userAuthId)} className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-semibold">Fecha Inicio:</label>
             <input
-              type="datetime-local"
+              type="date"
               value={fechaInicio}
               onChange={(e) => setFechaInicio(e.target.value)}
               className="border p-2 rounded-md w-full"
@@ -125,7 +127,7 @@ export default function EditarFinanciamiento({ onClose, userAuthId, financiamien
           <div>
             <label className="block font-semibold">Fecha Vencimiento:</label>
             <input
-              type="datetime-local"
+              type="date"
               value={fechaVencimiento}
               onChange={(e) => setFechaVencimiento(e.target.value)}
               className="border p-2 rounded-md w-full"
@@ -172,9 +174,6 @@ export default function EditarFinanciamiento({ onClose, userAuthId, financiamien
               className="border p-2 rounded-md w-full"
               required
             >
-              <option value="" disabled>
-                Selecciona un productor
-              </option>
               {productores.map((prod) => (
                 <option key={prod.id} value={prod.id}>
                   {prod.nombre} {prod.apellido} - {prod.tipoProductor}

@@ -11,6 +11,7 @@ import { AuthContext } from "@/app/context/AuthContext";
 import Table from '@/app/components/Table';
 import Header from '@/app/components/Header';
 import ListadoFinanciamiento from './ListadoFinanciamiento';
+
 interface Financiamiento {
   id: number;
   fechaInicio: string;
@@ -18,6 +19,7 @@ interface Financiamiento {
   nroLetra: string;
   monto: number;
   estado: boolean;
+  productorId: number;
   productorCedula: string;
   productorNombre: string;
   productorApellido: string;
@@ -29,9 +31,11 @@ interface Financiamiento {
 const Financiamiento = () => {
   const [financiamientos, setFinanciamientos] = useState<Financiamiento[]>([]);
   const [filteredFinanciamientos, setFilteredFinanciamientos] = useState<Financiamiento[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [showCrear, setShowCrear] = useState(false);
   const [showEditar, setShowEditar] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] =useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -39,6 +43,7 @@ const Financiamiento = () => {
   const authContext = useContext(AuthContext);
   const [showListadoFinanciamientos, setShowListadoFinanciamientos] = useState(false);
   const [financiamientoData, setFinanciamientoData] = useState<Financiamiento>();
+  const [financiamientoId, setFinanciamientoId] = useState<number | null>(null)
 
   if (!authContext?.user) {
     return <p>Cargando...</p>;
@@ -94,10 +99,10 @@ const Financiamiento = () => {
 
       if (!response.ok) throw new Error('Error al eliminar el financiamiento');
 
-      setFinanciamientos(financiamientos.filter((fin) => fin.id !== id));
-      alert('Financiamiento eliminado con éxito');
+      setMessage('Financiamiento eliminado con éxito');
+      setShowDeleteConfirm(false);
     } catch (error) {
-      alert('Error al eliminar el financiamiento');
+      setMessage('Error al eliminar el financiamiento');
     }
   };
 
@@ -168,7 +173,7 @@ const Financiamiento = () => {
       <button 
         className="bg-red-300 text-black px-4 py-2 rounded-lg shadow-lg border border-red-500 hover:bg-red-500 my-1" 
         title="Eliminar"
-        onClick={() => deleteFinanciamiento(financiamiento.id, userAuthId)}
+        onClick={() => {setShowDeleteConfirm(true); setFinanciamientoId(financiamiento.id)}}
       >
         <FaTimes size={10}/>
       </button>
@@ -184,6 +189,10 @@ const Financiamiento = () => {
         showListButton = {true}
         onAdd={()=> setShowCrear(true)}
         onList={() => setShowListadoFinanciamientos(true)}/>
+
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {message && <p className="text-green-500 mb-4">{message}</p>}
+
       {showCrear && (
         <CrearFinanciamiento
           onClose={() => setShowCrear(false)}
@@ -197,6 +206,29 @@ const Financiamiento = () => {
         financiamientoData={financiamientoData}
         />
       )}
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50">
+          <div className="bg-white text-black p-6 items-center rounded-md w-96 shadow-lg">
+            <p className="mb-4 text-center">¿Desea eliminar este financiamiento?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => deleteFinanciamiento(financiamientoId ?? 0, userAuthId)}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Sí
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {error && <p className="text-red-500 text-center">{error}</p>}
 
       {financiamientos.length === 0 ? (
