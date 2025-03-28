@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, FileText, BookOpen, LogOut, MoreVertical, User, Logs } from "lucide-react";
+
+import { Home, Users, FileText, BookOpen, LogOut, MoreVertical, User, Logs, DollarSign, ChartBar  } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -15,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
-
 
 interface SidebarProps {
   rolid: number;
@@ -32,15 +32,15 @@ const Sidebar = ({ rolid }: SidebarProps) => {
     { name: "Perfiles de Usuarios", href: "/dashboard/customerprofile", icon: <Users size={20} />, roles: [1] },
     { name: "Datos del Productor", href: "/dashboard/datosproductor", icon: <FileText size={20} />, roles: [1,3] },
     { name: "Portafolio de Cosechas", href: "/dashboard/harvestportfolio", icon: <BookOpen size={20} />, roles: [1,3] },
-    { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs  size={20} />, roles: [1] },
-
+    { name: "Logger de Eventos", href: "/dashboard/eventlogger", icon: <Logs size={20} />, roles: [1] },
+    { name: "Financiamiento", href: "/dashboard/financiamiento/", icon: <DollarSign size={20} />, roles: [1,3] },
+    { name: "Estadisticas", href: "/dashboard/statistics", icon: <ChartBar size={20} style={{ transform: "rotate(-90deg)" }} />, roles: [1]}
   ];
   
   const handleLogout = () => {
-    // Aquí se puede limpiar tokens o datos de sesión si los tienes
     if(authContext){
       authContext.logout();
-    };
+    }
     router.push("/");
   };
 
@@ -54,17 +54,15 @@ const Sidebar = ({ rolid }: SidebarProps) => {
           <Link
            key={item.name}
            href={item.href}
-           className={`flex items-center gap-3 p-2 rounded-lg transition-colors 
+           className={`flex items-center gap-3 p-2 rounded-lg transition-colors
             ${pathname === item.href ? "bg-blue-500" : "hover:bg-gray-700"}`}>
             {item.icon}
             <span>{item.name}</span>
           </Link>
         ))}
       </nav>
-      {/* Botón de Cerrar Sesión */}
-    
-      <div className="mt-auto flex justify-end bg-gray-800">  
-        <DropdownMenu> 
+      <div className="mt-auto flex justify-end bg-gray-800">
+        <DropdownMenu>
           <DropdownMenuTrigger>
             <MoreVertical className="w-5 h-5" />
           </DropdownMenuTrigger>
@@ -80,9 +78,10 @@ const Sidebar = ({ rolid }: SidebarProps) => {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div> 
+      </div>
     </aside>
   );
 };
 
 export default Sidebar;
+
