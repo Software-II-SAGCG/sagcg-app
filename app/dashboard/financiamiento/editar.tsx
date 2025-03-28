@@ -12,26 +12,39 @@ interface Productor {
   tipoProductor: string;
 }
 
+interface Financiamiento {
+    id: number;
+    fechaInicio: string;
+    fechaVencimiento: string;
+    nroLetra: string;
+    monto: number;
+    estado: boolean;
+    productorCedula: string;
+    productorNombre: string;
+    productorApellido: string;
+    productorTlfLocal: string;
+    productorDireccion: string;
+    productorTipo: string;
+  }
+
 interface FinanciamientoProps {
-  onClose: () => void; // Función para cerrar el módulo
-  userAuthId: number;  // Id del usuario autenticado
+  onClose: () => void; 
+  userAuthId: number; 
+  financiamientoData?: Financiamiento;
 }
 
-export default function CrearFinanciamiento({ onClose, userAuthId }: FinanciamientoProps) {
-  // Estados de los campos del formulario
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaVencimiento, setFechaVencimiento] = useState("");
-  const [noLetra, setNoLetra] = useState("");
-  const [monto, setMonto] = useState("");
-  const [estado, setEstado] = useState(false); // false: pendiente, true: pagado
-  const [productorId, setProductorId] = useState<number | null>(null);
+export default function EditarFinanciamiento({ onClose, userAuthId, financiamientoData }: FinanciamientoProps) {
 
-  // Estados para productores, mensajes y errores
+  const [fechaInicio, setFechaInicio] = useState(financiamientoData?.fechaInicio || "");
+  const [fechaVencimiento, setFechaVencimiento] = useState(financiamientoData?.fechaVencimiento || "");
+  const [noLetra, setNoLetra] = useState(financiamientoData?.nroLetra || "");
+  const [monto, setMonto] = useState(financiamientoData?.monto.toString() || "");
+  const [estado, setEstado] = useState(financiamientoData?.estado || false);
+  const [productorId, setProductorId] = useState<number | null>(null);
   const [productores, setProductores] = useState<Productor[]>([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  // Obtener la lista de productores desde el endpoint
   const getProductores = async () => {
     try {
       setError("");
@@ -51,14 +64,14 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
   }, []);
 
   // Manejo del envío del formulario
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, id:number, userAuthId:number) => {
     e.preventDefault();
     setError("");
     setMessage("");
     try {
       const body = {
-        fechaInicio,                // Ej: "2025-03-19T09:05" (datetime-local retorna formato ISO sin segundos)
-        fechaVencimiento,           // Ej: "2025-03-24T09:05"
+        fechaInicio,
+        fechaVencimiento,
         noLetra,
         monto: parseFloat(monto),
         estado,
@@ -66,33 +79,25 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
         userAuthId,
       };
 
-      const res = await fetch("/api/financiamiento/add", {
-        method: "POST",
+      const res = await fetch(`/api/financiamiento/update/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
       if (!res.ok) {
-        throw new Error("Error al crear el financiamiento");
+        throw new Error("Error al actualizar el financiamiento");
       }
 
-      setMessage("Financiamiento creado exitosamente");
-      // Limpiar campos del formulario
-      setFechaInicio("");
-      setFechaVencimiento("");
-      setNoLetra("");
-      setMonto("");
-      setEstado(false);
-      setProductorId(null);
+      setMessage("Financiamiento actualizado exitosamente");
     } catch (err: any) {
-      setError(err.message || "Error desconocido al crear financiamiento");
+      setError(err.message || "Error desconocido al actualizar financiamiento");
     }
   };
 
   return (
     <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex justify-center items-center overflow-auto z-50">
       <div className="bg-white text-black p-8 shadow-md rounded-md w-full max-w-5xl relative">
-        {/* Botón para cerrar el módulo */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
@@ -101,15 +106,12 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
           <FaTimes size={20} />
         </button>
 
-        {/* Encabezado */}
-        <h2 className="text-2xl font-bold mb-4 text-center">Crear Financiamiento</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Editar Financiamiento</h2>
 
-        {/* Mensajes de error o éxito */}
         {error && <p className="text-red-600 mb-2 text-center">{error}</p>}
         {message && <p className="text-green-600 mb-2 text-center">{message}</p>}
 
-        {/* Formulario para crear financiamiento */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        <form onSubmit={(e)=>handleSubmit(e, financiamientoData?.id || 0, userAuthId)} className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-semibold">Fecha Inicio:</label>
             <input
@@ -137,7 +139,6 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
               value={noLetra}
               onChange={(e) => setNoLetra(e.target.value)}
               className="border p-2 rounded-md w-full"
-              placeholder="000123"
               required
             />
           </div>
@@ -186,7 +187,7 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
               type="submit"
               className="bg-blue-500 text-white py-2 px-4 font-bold rounded-md hover:bg-blue-600"
             >
-              Guardar Financiamiento
+              Actualizar Financiamiento
             </button>
           </div>
         </form>

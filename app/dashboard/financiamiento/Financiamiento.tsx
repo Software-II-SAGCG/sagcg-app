@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
 import CrearFinanciamiento from './crear';
+import EditarFinanciamiento from './editar';
 import { AuthContext } from "@/app/context/AuthContext";
 import Table from '@/app/components/Table';
 import Header from '@/app/components/Header';
@@ -30,12 +31,14 @@ const Financiamiento = () => {
   const [filteredFinanciamientos, setFilteredFinanciamientos] = useState<Financiamiento[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCrear, setShowCrear] = useState(false);
+  const [showEditar, setShowEditar] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const router = useRouter();
   const authContext = useContext(AuthContext);
   const [showListadoFinanciamientos, setShowListadoFinanciamientos] = useState(false);
+  const [financiamientoData, setFinanciamientoData] = useState<Financiamiento>();
 
   if (!authContext?.user) {
     return <p>Cargando...</p>;
@@ -156,7 +159,9 @@ const Financiamiento = () => {
       <button 
         className="bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 hover:bg-yellow-500 m-1" 
         title="Editar"
-        onClick={() => updateFinanciamiento(financiamiento.id, { monto: 1500 })}
+        onClick={() => {
+          setShowEditar(true)
+          setFinanciamientoData(financiamiento)}}
       >
         <MdEdit size={10}/>
       </button>
@@ -183,6 +188,13 @@ const Financiamiento = () => {
         <CrearFinanciamiento
           onClose={() => setShowCrear(false)}
           userAuthId={userAuthId}
+        />
+      )}
+      {showEditar && (
+        <EditarFinanciamiento 
+        onClose={()=> setShowEditar(false)}
+        userAuthId={userAuthId}
+        financiamientoData={financiamientoData}
         />
       )}
       {error && <p className="text-red-500 text-center">{error}</p>}

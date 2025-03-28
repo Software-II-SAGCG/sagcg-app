@@ -1,14 +1,10 @@
 "use client";
 import { useEffect, useState, useContext } from 'react';
-import { FaEdit, FaTimes } from 'react-icons/fa';
-import { MdEdit } from 'react-icons/md';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import CrearFinanciamiento from './crear';
 import { AuthContext } from "@/app/context/AuthContext";
 import Table from '@/app/components/Table';
-import Header from '@/app/components/Header';
 import { FiPrinter } from "react-icons/fi";
 
 
@@ -32,9 +28,9 @@ interface FinanciamientoDataTotal {
   cantidadCancelados: number;
   cantidadNoCancelados: number;
   cantidadVencidos: number;
-  montoTotalCancelado: string;
-  montoTotalFinanciado: string;
-  montoTotalNoCancelado: string;
+  montoTotalCancelado: number;
+  montoTotalFinanciado: number;
+  montoTotalNoCancelado: number;
 }
 interface ListadoFinanciamiento {
   onClose: () => void;
@@ -42,7 +38,15 @@ interface ListadoFinanciamiento {
 
 const listadoFinanciamiento: React.FC<ListadoFinanciamiento> = ({ onClose }) => {
   const [financiamientos, setFinanciamientos] = useState<Financiamiento[]>([]);
-  const [financiamientosDataTotal, setFinanciamientosDataTotal] = useState<FinanciamientoDataTotal[]>([]);
+  const [financiamientosDataTotal, setFinanciamientosDataTotal] = useState<FinanciamientoDataTotal>({
+    cantidadBeneficiarios: 0,
+    cantidadCancelados: 0,
+  cantidadNoCancelados: 0,
+  cantidadVencidos: 0,
+  montoTotalCancelado: 0,
+  montoTotalFinanciado: 0,
+  montoTotalNoCancelado: 0
+  });
   const [filteredFinanciamientos, setFilteredFinanciamientos] = useState<Financiamiento[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCrear, setShowCrear] = useState(false);
@@ -63,22 +67,21 @@ const listadoFinanciamiento: React.FC<ListadoFinanciamiento> = ({ onClose }) => 
     const data = await response.json();
     setFinanciamientosDataTotal(data);
   }
+  const fetchListadoFinanciamientos = async () => {
+    try {
+      const response = await fetch('/api/financiamiento/get');
+      if (!response.ok) throw new Error('Error al obtener los financiamientos');
 
-  useEffect(() => {
-    const fetchListadoFinanciamientos = async () => {
-      try {
-        const response = await fetch('/api/financiamiento/get');
-        if (!response.ok) throw new Error('Error al obtener los financiamientos');
+      const data = await response.json();
 
-        const data = await response.json();
+      setFinanciamientos(data);
+      setFilteredFinanciamientos(data);
 
-        setFinanciamientos(data);
-        setFilteredFinanciamientos(data);
-
-      } catch (error) {
-        setError('Hubo un problema al cargar los financiamientos.');
-      }
+    } catch (error) {
+      setError('Hubo un problema al cargar los financiamientos.');
     }
+  }
+  useEffect(() => {
     fetchListadoFinanciamientos();
     fetchTotalDataFinanciamiento();
   }, []);
@@ -125,8 +128,7 @@ const listadoFinanciamiento: React.FC<ListadoFinanciamiento> = ({ onClose }) => 
     'N° Letra Cambio',
     'F. De Vencimiento',
     'Monto ($)',
-    'Pagó',
-    ''
+    'Pagó'
   ];
 
   const rows = financiamientos.map((financiamiento) => [
@@ -211,10 +213,7 @@ const listadoFinanciamiento: React.FC<ListadoFinanciamiento> = ({ onClose }) => 
                 </div>
                 </div>
               </div>
-
             )}
-
-
           </div>
         </div>
       </div>
