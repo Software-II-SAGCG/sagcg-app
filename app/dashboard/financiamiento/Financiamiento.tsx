@@ -9,7 +9,7 @@ import CrearFinanciamiento from './crear';
 import { AuthContext } from "@/app/context/AuthContext";
 import Table from '@/app/components/Table';
 import Header from '@/app/components/Header';
-
+import ListadoFinanciamiento from './ListadoFinanciamiento';
 interface Financiamiento {
   id: number;
   fechaInicio: string;
@@ -35,6 +35,7 @@ const Financiamiento = () => {
   const itemsPerPage = 10;
   const router = useRouter();
   const authContext = useContext(AuthContext);
+  const [showListadoFinanciamientos, setShowListadoFinanciamientos] = useState(false);
 
   if (!authContext?.user) {
     return <p>Cargando...</p>;
@@ -153,7 +154,7 @@ const Financiamiento = () => {
     financiamiento.estado ? 'Sí' : 'No',
     <>
       <button 
-        className="bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 hover:bg-yellow-500 my-1" 
+        className="bg-yellow-300 text-black px-4 py-2 rounded-lg shadow-lg border border-yellow-500 hover:bg-yellow-500 m-1" 
         title="Editar"
         onClick={() => updateFinanciamiento(financiamiento.id, { monto: 1500 })}
       >
@@ -177,7 +178,7 @@ const Financiamiento = () => {
         showSearchButton = {true}
         showListButton = {true}
         onAdd={()=> setShowCrear(true)}
-        onList={() => router.push('/dashboard/financiamiento/listaFinanciamiento')}/>
+        onList={() => setShowListadoFinanciamientos(true)}/>
       {showCrear && (
         <CrearFinanciamiento
           onClose={() => setShowCrear(false)}
@@ -193,7 +194,11 @@ const Financiamiento = () => {
           <Table headers={headers} rows={rows}/>
         </div>
       )}
-
+      {showListadoFinanciamientos && (
+        <ListadoFinanciamiento
+          onClose={() => setShowListadoFinanciamientos(false)}
+        />
+      )}
     </div>
   );
 };
