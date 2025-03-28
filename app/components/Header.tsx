@@ -1,15 +1,17 @@
 import React from 'react';
-import { FaSearch, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaList } from 'react-icons/fa';
 
 interface HeaderProps {
   title: string;
   showSearchBar?: boolean;
   showSearchButton?: boolean;
   showAddButton?: boolean;
+  showListButton?: boolean;
   searchValue?: string;
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSearch?: () => void;
   onAdd?: () => void;
+  onList?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -17,10 +19,12 @@ const Header: React.FC<HeaderProps> = ({
   showSearchBar = false, 
   showSearchButton = false, 
   showAddButton = false,
+  showListButton = false,
   searchValue = "",
   onSearchChange, 
   onSearch, 
-  onAdd }) => {
+  onAdd,
+  onList }) => {
   return (
     <div>
       <div className="bg-blue-500 text-white p-3 rounded-md text-center text-lg font-bold">
@@ -28,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Search and Add Buttons */}
-      {(showSearchBar || showSearchButton || showAddButton) && (
+      {(showSearchBar || showSearchButton || showAddButton || showListButton) && (
         <div className="flex justify-between my-4">
           {(showSearchBar &&
             <input
@@ -54,6 +58,14 @@ const Header: React.FC<HeaderProps> = ({
                 onClick={onAdd}
               >
                 <FaPlus />
+              </button>
+            )}
+            {showListButton && (
+              <button 
+                className="bg-green-500 hover:bg-green-600 text-white p-2 rounded" 
+                onClick={onList}
+              >
+                <FaList />
               </button>
             )}
           </div>
