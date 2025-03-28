@@ -84,6 +84,9 @@ export default function CrearFinanciamiento({ onClose, userAuthId }: Financiamie
       setMonto("");
       setEstado(false);
       setProductorId(null);
+      setTimeout(()=>{
+        onClose();
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Error desconocido al crear financiamiento");
     }

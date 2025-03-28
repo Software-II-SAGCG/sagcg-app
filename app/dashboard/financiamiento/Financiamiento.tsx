@@ -49,21 +49,21 @@ const Financiamiento = () => {
     return <p>Cargando...</p>;
   }
   const { id: userAuthId} = authContext.user;
+  const fetchFinanciamientos = async () => {
+    try {
+      const response = await fetch('/api/financiamiento/get');
+      if (!response.ok) throw new Error('Error al obtener los financiamientos');
 
-  useEffect(() => {
-    const fetchFinanciamientos = async () => {
-      try {
-        const response = await fetch('/api/financiamiento/get');
-        if (!response.ok) throw new Error('Error al obtener los financiamientos');
-
-        const data = await response.json();
-        console.log(data);
-        setFinanciamientos(data);
-        setFilteredFinanciamientos(data);
-      } catch (error) {
-        setError('Hubo un problema al cargar los financiamientos.');
-      }
+      const data = await response.json();
+      console.log(data);
+      setFinanciamientos(data);
+      setFilteredFinanciamientos(data);
+    } catch (error) {
+      setError('Hubo un problema al cargar los financiamientos.');
     }
+  }
+  useEffect(() => {
+    
     fetchFinanciamientos();
   }, []);
 
@@ -99,6 +99,7 @@ const Financiamiento = () => {
 
       if (!response.ok) throw new Error('Error al eliminar el financiamiento');
 
+      fetchFinanciamientos();
       setMessage('Financiamiento eliminado con éxito');
       setShowDeleteConfirm(false);
     } catch (error) {
@@ -195,13 +196,13 @@ const Financiamiento = () => {
 
       {showCrear && (
         <CrearFinanciamiento
-          onClose={() => setShowCrear(false)}
+          onClose={() => {setShowCrear(false); fetchFinanciamientos()}}
           userAuthId={userAuthId}
         />
       )}
       {showEditar && (
         <EditarFinanciamiento 
-        onClose={()=> setShowEditar(false)}
+        onClose={()=> {setShowEditar(false); fetchFinanciamientos()}}
         userAuthId={userAuthId}
         financiamientoData={financiamientoData}
         />

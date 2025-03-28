@@ -93,6 +93,9 @@ export default function EditarFinanciamiento({ onClose, userAuthId, financiamien
       }
 
       setMessage("Financiamiento actualizado exitosamente");
+      setTimeout(()=>{
+        onClose();
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Error desconocido al actualizar financiamiento");
     }
